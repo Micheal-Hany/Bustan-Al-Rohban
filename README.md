@@ -15,3 +15,21 @@ Website: https://coptic-treasures.com/
 ## Status
 
 Planning complete and content schema approved. No application code yet. Implementation starts only after the owner replies **GO** (see `ROADMAP.md` section 9).
+
+## Task 0 setup (run on your machine)
+
+The code was written without a Flutter toolchain, so it is **unverified** until you run it.
+
+```bash
+git pull
+flutter create --platforms=android --org com.michaelhany --project-name bustan_al_rohban .
+rm -f test/widget_test.dart        # generated sample test, replaced by test/app/*
+flutter pub get
+flutter analyze
+flutter test test/app/app_boot_test.dart
+flutter test test/app/rtl_smoke_test.dart
+flutter run                        # then follow the manual steps in ROADMAP.md, Task 0
+```
+
+If `flutter create` overwrote `pubspec.yaml` or `lib/main.dart`, run `git checkout pubspec.yaml lib/main.dart`.
+Optional: add the Arabic font files (see `assets/fonts/README.md`).
