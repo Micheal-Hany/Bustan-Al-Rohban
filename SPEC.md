@@ -1509,7 +1509,7 @@ A feature is done only when:
 |---|---|
 | `SPEC.md` | Product and technical source of truth (this file) |
 | `ROADMAP.md` | Ordered tasks, verification, development loop, approval gates |
-| `docs/CONTENT_SCHEMA.md` | Content file format, ID rules, validation rules (awaiting owner approval) |
+| `docs/CONTENT_SCHEMA.md` | Content file format, ID rules, validation rules (approved 2026-11-15) |
 
 ------------------------------------------------------------------------
 

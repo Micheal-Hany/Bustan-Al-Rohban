@@ -1,8 +1,8 @@
 # Content Schema --- Bustan Al-Rohban
 
 **Document:** `docs/CONTENT_SCHEMA.md`\
-**Schema version:** `1` (draft)\
-**Status:** **DRAFT --- awaiting owner approval.** Do not prepare the real book files until this is approved (or changed).\
+**Schema version:** `1`\
+**Status:** **APPROVED by the owner on 2026-11-15** (all 7 items in section 8, no changes). The real book files may now be prepared in the authoring format.\
 **Used by:** Task 1 (loader, validator, converter), Task 7 (insights), Task 10 (backend corpus), Task 13 (real import).
 
 The owner supplies the book as plain text files (section 2). A converter
@@ -247,7 +247,7 @@ The **content report** is a generated Markdown file listing counts, all warnings
 - `contentVersion` increases when book text or insights change. The app stores which `contentVersion` a bookmark or conversation scope was created under.
 - Because identity is the ID, re-ordering or re-splitting sections never breaks bookmarks, as long as paragraph IDs are kept.
 
-## 8. Decisions for the owner to approve
+## 8. Owner decisions (approved 2026-11-15)
 
 Please reply with "approved" or with changes to any item:
 

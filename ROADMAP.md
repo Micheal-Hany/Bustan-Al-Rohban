@@ -125,7 +125,7 @@ Expected: boot test passes; initial route works; RTL direction correct; theme in
 
 ### Task 1 --- Content schema, loader, validator, FAKE fixture
 
-**Scope:** Implement the schema in `docs/CONTENT_SCHEMA.md` (owner-approved): manifest plus per-saint files, stable IDs and ordering, page metadata, content versioning; the **authoring-format converter** (owner text files to JSON); loader and validator with useful errors; three FAKE saints with 2-3 sections each.\
+**Scope:** Implement the schema in `docs/CONTENT_SCHEMA.md` (owner-approved 2026-11-15): manifest plus per-saint files, stable IDs and ordering, page metadata, content versioning; the **authoring-format converter** (owner text files to JSON); loader and validator with useful errors; three FAKE saints with 2-3 sections each.\
 **Dependencies:** Task 0, and **owner approval of `docs/CONTENT_SCHEMA.md`**.
 
 **A. Automated**
@@ -556,7 +556,7 @@ Do not add architecture, duplicate content storage, or new dependencies without 
 
 | Phase | Tasks | Status |
 |---|---|---|
-| Planning | SPEC v1.2, ROADMAP v1.1, content schema draft | Done; **content schema awaiting owner approval** |
+| Planning | SPEC v1.2, ROADMAP v1.1, content schema draft | Done; content schema **approved 2026-11-15** |
 | Foundation | 0-1 | Not started |
 | Offline library | 2, S1, 3-6 | Not started |
 | Reading experience | 7-8 | Not started |
