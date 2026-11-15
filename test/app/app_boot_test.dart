@@ -65,7 +65,7 @@ void main() {
             reason: entry.value);
         expect(find.text(AppStrings.underConstruction), findsOneWidget);
 
-        await tester.pageBack();
+        await tester.tap(find.byType(BackButton));
         await tester.pumpAndSettle();
         expect(find.byKey(const Key('home-screen')), findsOneWidget);
       }
