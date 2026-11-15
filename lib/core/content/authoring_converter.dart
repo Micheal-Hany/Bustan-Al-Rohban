@@ -61,6 +61,7 @@ class AuthoringConverter {
     required IdRegistry registry,
     int contentVersion = 1,
   }) {
+    registry.startRun();
     final issues = <ContentIssue>[];
     final meta = _parseBookMeta(bookText, issues);
 

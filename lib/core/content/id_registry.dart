@@ -39,6 +39,10 @@ class IdRegistry {
     return sha256.convert(bytes).toString();
   }
 
+  /// Call at the start of each conversion run so [retiredIds] only reflects
+  /// that run.
+  void startRun() => _seen.clear();
+
   String assign(String fingerprint) {
     _seen.add(fingerprint);
     final existing = _ids[fingerprint];
