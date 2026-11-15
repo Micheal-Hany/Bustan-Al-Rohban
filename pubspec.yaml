@@ -14,6 +14,7 @@ dependencies:
   intl: any
   flutter_bloc: ^8.1.6
   go_router: ^14.2.0
+  crypto: ^3.0.3
 
 dev_dependencies:
   flutter_test:
@@ -22,6 +23,12 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/content/
+    - assets/content/saints/
+    # Debug-only invalid fixture; removed from release builds in Task 13.
+    - assets/content_fixtures/invalid/
+    - assets/content_fixtures/invalid/saints/
   # Arabic font: see assets/fonts/README.md. Uncomment AFTER adding the font
   # files, otherwise the build fails on missing assets.
   # fonts:

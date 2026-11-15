@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -40,6 +41,13 @@ class HomeScreen extends StatelessWidget {
         icon: Icons.settings,
         path: AppRoutes.settings
       ),
+      if (kDebugMode)
+        (
+          key: 'nav-content-preview',
+          title: AppStrings.contentPreview,
+          icon: Icons.fact_check_outlined,
+          path: AppRoutes.contentPreview
+        ),
     ];
 
     return Scaffold(

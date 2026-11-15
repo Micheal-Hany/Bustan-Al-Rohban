@@ -1,0 +1,10 @@
+@book
+id: bustan-al-rohban
+title: بستان الرهبان
+language: ar
+fixture: true
+edition: [تجريبي] طبعة تجريبية - ليست من الكتاب
+publisher: [تجريبي] لا يوجد ناشر
+year: تجريبي
+attribution: [تجريبي] محتوى تجريبي للاختبار فقط
+rights: owner-confirmed

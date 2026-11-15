@@ -33,3 +33,22 @@ flutter run                        # then follow the manual steps in ROADMAP.md,
 
 If `flutter create` overwrote `pubspec.yaml` or `lib/main.dart`, run `git checkout pubspec.yaml lib/main.dart`.
 Optional: add the Arabic font files (see `assets/fonts/README.md`).
+
+## Task 1 (content core) - run on your machine
+
+Unverified until you run it. After `git pull`:
+
+```bash
+flutter pub get
+flutter analyze
+flutter test test/core/content/
+flutter test
+```
+
+Convert authoring text files to JSON (the same tool you will use for the real book):
+
+```bash
+dart run tool/convert_content.dart content_src/fake assets/content content_src/fake/id-registry.json
+```
+
+Then `flutter run` (debug) and open "معاينة المحتوى" on the home screen.

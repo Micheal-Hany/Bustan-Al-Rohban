@@ -1,0 +1,4 @@
+# Keep content and sources byte-stable across Windows/Linux checkouts.
+*.json text eol=lf
+*.txt text eol=lf
+*.dart text eol=lf

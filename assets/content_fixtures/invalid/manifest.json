@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": 1,
+  "bookId": "bustan-al-rohban",
+  "title": "بستان الرهبان",
+  "language": "ar",
+  "fixture": true,
+  "edition": { "title": "[تجريبي] ملف غير صالح للاختبار" },
+  "saints": [
+    {
+      "id": "saint-bad",
+      "title": "[تجريبي] قديس بملف غير صالح",
+      "order": 1,
+      "aliases": ["قديس غير صالح"],
+      "file": "saints/saint-bad.json",
+      "sectionCount": 1,
+      "paragraphCount": 3
+    }
+  ],
+  "contentHash": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+}

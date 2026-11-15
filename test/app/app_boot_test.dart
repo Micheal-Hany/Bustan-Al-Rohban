@@ -17,6 +17,7 @@ void main() {
           '/bookmarks',
           '/chat',
           '/settings',
+          '/content-preview',
         ]),
       );
     });

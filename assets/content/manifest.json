@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": 1,
+  "bookId": "bustan-al-rohban",
+  "title": "بستان الرهبان",
+  "language": "ar",
+  "fixture": true,
+  "edition": {
+    "title": "[تجريبي] طبعة تجريبية - ليست من الكتاب",
+    "publisher": "[تجريبي] لا يوجد ناشر",
+    "year": "تجريبي",
+    "attribution": "[تجريبي] محتوى تجريبي للاختبار فقط"
+  },
+  "saints": [
+    {
+      "id": "saint-fake-one",
+      "title": "[تجريبي] القديس الأول",
+      "order": 1,
+      "aliases": [
+        "القديس الأول",
+        "فيك ون"
+      ],
+      "file": "saints/saint-fake-one.json",
+      "sectionCount": 3,
+      "paragraphCount": 7
+    },
+    {
+      "id": "saint-fake-two",
+      "title": "[تجريبي] القديس الثاني",
+      "order": 2,
+      "aliases": [
+        "القديس الثاني"
+      ],
+      "file": "saints/saint-fake-two.json",
+      "sectionCount": 2,
+      "paragraphCount": 3
+    },
+    {
+      "id": "saint-fake-three",
+      "title": "[تجريبي] القديس الثالث",
+      "order": 3,
+      "aliases": [
+        "القديس الثالث",
+        "فيك ثري"
+      ],
+      "file": "saints/saint-fake-three.json",
+      "sectionCount": 2,
+      "paragraphCount": 3
+    }
+  ],
+  "contentHash": "sha256:398437cf3d66bf4f772a90ca3a47b222eeba415ed36a482a84338193058f6c43"
+}

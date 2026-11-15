@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 
+import '../../core/content/asset_content_source.dart';
+import '../../core/content/preview/content_preview_screen.dart';
 import '../../core/screens/home_screen.dart';
 import '../../core/screens/placeholder_screen.dart';
 import '../strings.dart';
@@ -14,8 +16,17 @@ class AppRoutes {
   static const bookmarks = '/bookmarks';
   static const chat = '/chat';
   static const settings = '/settings';
+  static const contentPreview = '/content-preview';
 
-  static const all = [home, library, search, bookmarks, chat, settings];
+  static const all = [
+    home,
+    library,
+    search,
+    bookmarks,
+    chat,
+    settings,
+    contentPreview,
+  ];
 }
 
 /// A new router per app instance (keeps tests isolated).
@@ -53,6 +64,13 @@ GoRouter createRouter() {
         builder: (context, state) => const PlaceholderScreen(
           screenKey: 'chat-screen',
           title: AppStrings.chat,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.contentPreview,
+        builder: (context, state) => const ContentPreviewScreen(
+          validSource: AssetContentSource('assets/content'),
+          invalidSource: AssetContentSource('assets/content_fixtures/invalid'),
         ),
       ),
       GoRoute(

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "saint-bad",
+  "title": "[تجريبي] قديس بملف غير صالح",
+  "order": 1,
+  "aliases": ["قديس غير صالح"],
+  "sections": [
+    {
+      "id": "sec-bad-001",
+      "title": "[تجريبي] قسم غير صالح",
+      "order": 1,
+      "pageStart": 1,
+      "pageEnd": 2,
+      "paragraphs": [
+        { "id": "p-000001", "order": 1, "kind": "body", "page": 1, "text": "فقرة تجريبية صحيحة. ليست من الكتاب." },
+        { "id": "p-000001", "order": 2, "kind": "body", "page": 1, "text": "معرّف مكرر عمدًا للاختبار." },
+        { "id": "p-000002", "order": 3, "kind": "body", "page": 2, "text": "   " }
+      ]
+    }
+  ]
+}
