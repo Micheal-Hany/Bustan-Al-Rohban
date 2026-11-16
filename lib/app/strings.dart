@@ -12,6 +12,28 @@ class AppStrings {
   static const settings = 'الإعدادات';
   static const underConstruction = 'هذه الصفحة قيد الإنشاء';
 
+  // Library (Task 2)
+  static const bookOverview = 'نظرة عامة على الكتاب';
+  static const saintsList = 'القديسون';
+  static const sectionsList = 'الأقسام';
+  static const viewSaints = 'عرض القديسين';
+  static const saintsWord = 'قديسين';
+  static const retry = 'إعادة المحاولة';
+  static const loadFailed = 'تعذر تحميل المحتوى';
+  static const unexpectedError = 'حدث خطأ غير متوقع';
+  static const notFound = 'العنصر غير موجود';
+  static const emptyLibrary = 'لا يوجد محتوى بعد';
+  static const emptySaints = 'لا يوجد قديسون';
+  static const emptySections = 'لا توجد أقسام لهذا القديس';
+  static const contentVersionLabel = 'إصدار المحتوى';
+  static const editionLabel = 'الطبعة';
+  static const authorLabel = 'المؤلف';
+  static const publisherLabel = 'الناشر';
+  static const yearLabel = 'السنة';
+  static const attributionLabel = 'الإسناد';
+  static const aliasesLabel = 'أسماء أخرى';
+  static const readerComingSoon = 'عرض النص يأتي في المهمة التالية';
+
   // Content preview (debug only)
   static const contentPreview = 'معاينة المحتوى';
   static const loadInvalid = 'تحميل ملف غير صالح';

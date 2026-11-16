@@ -4,6 +4,11 @@ import '../../core/content/asset_content_source.dart';
 import '../../core/content/preview/content_preview_screen.dart';
 import '../../core/screens/home_screen.dart';
 import '../../core/screens/placeholder_screen.dart';
+import '../../features/library/presentation/book_overview_screen.dart';
+import '../../features/library/presentation/library_home_screen.dart';
+import '../../features/library/presentation/saint_sections_screen.dart';
+import '../../features/library/presentation/saints_list_screen.dart';
+import '../../features/library/presentation/section_placeholder_screen.dart';
 import '../strings.dart';
 
 /// Route paths. Real screens replace placeholders in later tasks.
@@ -12,15 +17,24 @@ class AppRoutes {
 
   static const home = '/';
   static const library = '/library';
+  static const libraryBook = '/library/book';
+  static const librarySaints = '/library/book/saints';
   static const search = '/search';
   static const bookmarks = '/bookmarks';
   static const chat = '/chat';
   static const settings = '/settings';
   static const contentPreview = '/content-preview';
 
+  static String saint(String saintId) => '$librarySaints/$saintId';
+
+  static String section(String saintId, String sectionId) =>
+      '$librarySaints/$saintId/sections/$sectionId';
+
   static const all = [
     home,
     library,
+    libraryBook,
+    librarySaints,
     search,
     bookmarks,
     chat,
@@ -40,9 +54,27 @@ GoRouter createRouter() {
       ),
       GoRoute(
         path: AppRoutes.library,
-        builder: (context, state) => const PlaceholderScreen(
-          screenKey: 'library-screen',
-          title: AppStrings.library,
+        builder: (context, state) => const LibraryHomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.libraryBook,
+        builder: (context, state) => const BookOverviewScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.librarySaints,
+        builder: (context, state) => const SaintsListScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.librarySaints}/:saintId',
+        builder: (context, state) => SaintSectionsScreen(
+          saintId: state.pathParameters['saintId']!,
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.librarySaints}/:saintId/sections/:sectionId',
+        builder: (context, state) => SectionPlaceholderScreen(
+          saintId: state.pathParameters['saintId']!,
+          sectionId: state.pathParameters['sectionId']!,
         ),
       ),
       GoRoute(

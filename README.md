@@ -52,3 +52,15 @@ dart run tool/convert_content.dart content_src/fake assets/content content_src/f
 ```
 
 Then `flutter run` (debug) and open "معاينة المحتوى" on the home screen.
+
+## Task 2 (library and navigation) - run on your machine
+
+Unverified until you run it. After `git pull`:
+
+```bash
+flutter pub get
+flutter analyze
+flutter test test/features/library/
+flutter test
+flutter run   # Library -> book -> saints -> a saint -> a section -> back
+```

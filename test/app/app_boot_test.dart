@@ -47,9 +47,8 @@ void main() {
       }
     });
 
-    testWidgets('can open each placeholder screen and go back', (tester) async {
+    testWidgets('can open each placeholder screen and go back (library is a real screen since Task 2)', (tester) async {
       final cases = {
-        'nav-library': 'library-screen',
         'nav-search': 'search-screen',
         'nav-bookmarks': 'bookmarks-screen',
         'nav-chat': 'chat-screen',
