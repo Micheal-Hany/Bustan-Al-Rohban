@@ -77,3 +77,17 @@ flutter test
 ```
 
 Then follow `docs/TTS_SPIKE.md` on a real Android device (includes a one-time manifest change) and fill in the findings table.
+
+## Task 3 (Arabic reader) - run on your machine
+
+Unverified until you run it. After `git pull`:
+
+```bash
+flutter pub get          # adds scrollable_positioned_list
+flutter analyze
+flutter test test/features/reader/
+flutter test
+flutter run   # Library -> book -> saints -> a saint -> a section
+```
+
+Text size is held in memory in this task; persistence comes in Task 6.

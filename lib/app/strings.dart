@@ -35,7 +35,11 @@ class AppStrings {
   static const yearLabel = 'السنة';
   static const attributionLabel = 'الإسناد';
   static const aliasesLabel = 'أسماء أخرى';
-  static const readerComingSoon = 'عرض النص يأتي في المهمة التالية';
+  // Reader (Task 3)
+  static const textSmaller = 'تصغير الخط';
+  static const textLarger = 'تكبير الخط';
+  static const editorialLabel = 'إضافة تحريرية - ليست من نص الكتاب';
+  static const emptyParagraphs = 'لا توجد فقرات في هذا القسم';
 
   // Content preview (debug only)
   static const contentPreview = 'معاينة المحتوى';

@@ -9,7 +9,7 @@ import '../../spikes/tts/tts_spike_screen.dart';
 import '../../features/library/presentation/library_home_screen.dart';
 import '../../features/library/presentation/saint_sections_screen.dart';
 import '../../features/library/presentation/saints_list_screen.dart';
-import '../../features/library/presentation/section_placeholder_screen.dart';
+import '../../features/reader/presentation/reader_screen.dart';
 import '../strings.dart';
 
 /// Route paths. Real screens replace placeholders in later tasks.
@@ -29,8 +29,15 @@ class AppRoutes {
 
   static String saint(String saintId) => '$librarySaints/$saintId';
 
-  static String section(String saintId, String sectionId) =>
-      '$librarySaints/$saintId/sections/$sectionId';
+  /// [paragraphId] opens the reader at that paragraph anchor.
+  static String section(
+    String saintId,
+    String sectionId, {
+    String? paragraphId,
+  }) {
+    final path = '$librarySaints/$saintId/sections/$sectionId';
+    return paragraphId == null ? path : '$path?p=$paragraphId';
+  }
 
   static const all = [
     home,
@@ -75,9 +82,10 @@ GoRouter createRouter() {
       ),
       GoRoute(
         path: '${AppRoutes.librarySaints}/:saintId/sections/:sectionId',
-        builder: (context, state) => SectionPlaceholderScreen(
+        builder: (context, state) => ReaderScreen(
           saintId: state.pathParameters['saintId']!,
           sectionId: state.pathParameters['sectionId']!,
+          paragraphId: state.uri.queryParameters['p'],
         ),
       ),
       GoRoute(

@@ -55,8 +55,8 @@ void main() {
 
       await tester.tap(find.byKey(const Key('section-tile-sec-a-001')));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('section-screen')), findsOneWidget);
-      expect(find.textContaining(AppStrings.readerComingSoon), findsOneWidget);
+      expect(find.byKey(const Key('reader-screen')), findsOneWidget);
+      expect(find.text('نص آخر'), findsOneWidget);
 
       // Back out, one screen at a time.
       for (final key in [
