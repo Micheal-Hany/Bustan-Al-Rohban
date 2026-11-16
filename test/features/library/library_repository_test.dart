@@ -7,7 +7,7 @@ import 'library_test_support.dart';
 
 void main() {
   group('LibraryRepository', () {
-    test('saints are returned in book order', () async {
+    test('saints are returned in book order (by order field)', () async {
       final repo = repoFor(probeFor(twoSaintBook()));
       final saints = await repo.saints();
       expect(saints.map((s) => s.id), ['saint-a', 'saint-b']);

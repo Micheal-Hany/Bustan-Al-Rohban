@@ -30,20 +30,9 @@ class ProbeSource implements ContentSource {
   }
 }
 
-/// Two FAKE-style saints given out of order (order 2 listed first).
+/// Two saints. The manifest validator requires them listed in order
+/// (order 1, then 2), so the book is valid.
 TestBook twoSaintBook() => buildBook([
-      saintJson(
-        id: 'saint-b',
-        order: 2,
-        title: 'القديس الثاني',
-        sections: [
-          sectionJson(
-            id: 'sec-b-001',
-            title: 'قسم ب',
-            paragraphs: [paraJson(id: 'p-000004', text: 'نص ب')],
-          ),
-        ],
-      ),
       saintJson(
         id: 'saint-a',
         order: 1,
@@ -62,6 +51,18 @@ TestBook twoSaintBook() => buildBook([
             order: 2,
             title: 'قسم أ ٢',
             paragraphs: [paraJson(id: 'p-000003', page: null)],
+          ),
+        ],
+      ),
+      saintJson(
+        id: 'saint-b',
+        order: 2,
+        title: 'القديس الثاني',
+        sections: [
+          sectionJson(
+            id: 'sec-b-001',
+            title: 'قسم ب',
+            paragraphs: [paraJson(id: 'p-000004', text: 'نص ب')],
           ),
         ],
       ),
