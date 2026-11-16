@@ -10,6 +10,7 @@ import '../../features/library/presentation/library_home_screen.dart';
 import '../../features/library/presentation/saint_sections_screen.dart';
 import '../../features/library/presentation/saints_list_screen.dart';
 import '../../features/reader/presentation/reader_screen.dart';
+import '../../features/search/presentation/search_screen.dart';
 import '../strings.dart';
 
 /// Route paths. Real screens replace placeholders in later tasks.
@@ -90,10 +91,7 @@ GoRouter createRouter() {
       ),
       GoRoute(
         path: AppRoutes.search,
-        builder: (context, state) => const PlaceholderScreen(
-          screenKey: 'search-screen',
-          title: AppStrings.search,
-        ),
+        builder: (context, state) => const SearchScreen(),
       ),
       GoRoute(
         path: AppRoutes.bookmarks,

@@ -91,3 +91,18 @@ flutter run   # Library -> book -> saints -> a saint -> a section
 ```
 
 Text size is held in memory in this task; persistence comes in Task 6.
+
+## Task 4 (Arabic local search) - run on your machine
+
+Unverified until you run it. After `git pull`:
+
+```bash
+flutter pub get
+flutter analyze
+flutter test test/core/search/
+flutter test test/features/search/
+flutter test
+flutter run   # Search -> type an Arabic word, with and without diacritics
+```
+
+The search index is pure Dart (in memory, built from the installed JSON on first search). A SQLite FTS adapter is deferred to Task 5 and only if the real book needs it.

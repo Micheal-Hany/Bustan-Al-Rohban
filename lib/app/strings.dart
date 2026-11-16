@@ -35,6 +35,13 @@ class AppStrings {
   static const yearLabel = 'السنة';
   static const attributionLabel = 'الإسناد';
   static const aliasesLabel = 'أسماء أخرى';
+  // Search (Task 4)
+  static const searchHint = 'ابحث في الكتاب';
+  static const searchClear = 'مسح';
+  static const searchIdle = 'اكتب كلمة أو أكثر للبحث في نص الكتاب';
+  static const searchNoResults = 'لا توجد نتائج مطابقة';
+  static const searchResultsWord = 'نتيجة';
+
   // Reader (Task 3)
   static const textSmaller = 'تصغير الخط';
   static const textLarger = 'تكبير الخط';

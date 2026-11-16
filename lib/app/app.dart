@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../core/content/asset_content_source.dart';
 import '../core/content/content_loader.dart';
 import '../features/library/data/library_repository.dart';
+import '../features/search/data/search_repository.dart';
 import 'router/app_router.dart';
 import 'strings.dart';
 import 'theme/app_theme.dart';
@@ -28,6 +29,7 @@ class _BustanAppState extends State<BustanApp> {
       LibraryRepository(
         ContentLoader(const AssetContentSource('assets/content')),
       );
+  late final SearchRepository _search = SearchRepository(_library);
 
   @override
   void dispose() {
@@ -37,8 +39,11 @@ class _BustanAppState extends State<BustanApp> {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider<LibraryRepository>.value(
-      value: _library,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<LibraryRepository>.value(value: _library),
+        RepositoryProvider<SearchRepository>.value(value: _search),
+      ],
       child: MaterialApp.router(
         title: AppStrings.appTitle,
         debugShowCheckedModeBanner: false,
