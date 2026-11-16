@@ -31,7 +31,7 @@ void main() {
     });
 
     test('steps are increasing and include 1.0', () {
-      final s = TextScaleCubit.steps;
+      const s = TextScaleCubit.steps;
       for (var i = 1; i < s.length; i++) {
         expect(s[i], greaterThan(s[i - 1]));
       }

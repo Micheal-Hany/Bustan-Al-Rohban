@@ -22,6 +22,7 @@ void main() {
       final states = <SearchStatus>[];
       final sub = c.stream.listen((s) => states.add(s.status));
       await c.submit('رحمة');
+      await Future<void>.delayed(Duration.zero); // let the stream deliver
       await sub.cancel();
       expect(states, [SearchStatus.building, SearchStatus.results]);
       expect(c.state.response!.total, 2);
@@ -35,6 +36,7 @@ void main() {
       final states = <SearchStatus>[];
       final sub = c.stream.listen((s) => states.add(s.status));
       await c.submit('محبة');
+      await Future<void>.delayed(Duration.zero); // let the stream deliver
       await sub.cancel();
       expect(states, [SearchStatus.results]);
       await c.close();
