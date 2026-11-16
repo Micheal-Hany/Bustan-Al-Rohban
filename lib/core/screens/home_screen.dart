@@ -48,6 +48,13 @@ class HomeScreen extends StatelessWidget {
           icon: Icons.fact_check_outlined,
           path: AppRoutes.contentPreview
         ),
+      if (kDebugMode)
+        (
+          key: 'nav-tts-spike',
+          title: AppStrings.ttsSpike,
+          icon: Icons.record_voice_over,
+          path: AppRoutes.ttsSpike
+        ),
     ];
 
     return Scaffold(

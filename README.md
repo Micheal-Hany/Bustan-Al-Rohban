@@ -64,3 +64,16 @@ flutter test test/features/library/
 flutter test
 flutter run   # Library -> book -> saints -> a saint -> a section -> back
 ```
+
+## Spike S1 (TTS feasibility) - run on your machine
+
+Unverified until you run it. After `git pull`:
+
+```bash
+flutter pub get
+flutter analyze
+flutter test spikes/tts/
+flutter test
+```
+
+Then follow `docs/TTS_SPIKE.md` on a real Android device (includes a one-time manifest change) and fill in the findings table.

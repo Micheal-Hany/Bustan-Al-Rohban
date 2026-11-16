@@ -12,6 +12,9 @@ class AppStrings {
   static const settings = 'الإعدادات';
   static const underConstruction = 'هذه الصفحة قيد الإنشاء';
 
+  // Spike S1 (debug only)
+  static const ttsSpike = 'تجربة النطق (S1)';
+
   // Library (Task 2)
   static const bookOverview = 'نظرة عامة على الكتاب';
   static const saintsList = 'القديسون';

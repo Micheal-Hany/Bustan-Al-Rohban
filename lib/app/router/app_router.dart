@@ -5,6 +5,7 @@ import '../../core/content/preview/content_preview_screen.dart';
 import '../../core/screens/home_screen.dart';
 import '../../core/screens/placeholder_screen.dart';
 import '../../features/library/presentation/book_overview_screen.dart';
+import '../../spikes/tts/tts_spike_screen.dart';
 import '../../features/library/presentation/library_home_screen.dart';
 import '../../features/library/presentation/saint_sections_screen.dart';
 import '../../features/library/presentation/saints_list_screen.dart';
@@ -24,6 +25,7 @@ class AppRoutes {
   static const chat = '/chat';
   static const settings = '/settings';
   static const contentPreview = '/content-preview';
+  static const ttsSpike = '/spikes/tts';
 
   static String saint(String saintId) => '$librarySaints/$saintId';
 
@@ -40,6 +42,7 @@ class AppRoutes {
     chat,
     settings,
     contentPreview,
+    ttsSpike,
   ];
 }
 
@@ -104,6 +107,10 @@ GoRouter createRouter() {
           validSource: AssetContentSource('assets/content'),
           invalidSource: AssetContentSource('assets/content_fixtures/invalid'),
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.ttsSpike,
+        builder: (context, state) => const TtsSpikeScreen(),
       ),
       GoRoute(
         path: AppRoutes.settings,
