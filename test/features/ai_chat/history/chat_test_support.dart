@@ -84,6 +84,13 @@ class FailingChatStore implements ChatStore {
   }
 }
 
+/// An in-memory store whose clock advances one second per call, so
+/// "most recently updated" is deterministic.
+InMemoryChatStore steppingStore() {
+  var t = DateTime.utc(2026, 1, 1);
+  return InMemoryChatStore(clock: () => t = t.add(const Duration(seconds: 1)));
+}
+
 /// Two conversations: the first created is older. Returns their ids.
 Future<({String older, String newer})> seedTwo(ChatStore store) async {
   final a = await store.createConversation();

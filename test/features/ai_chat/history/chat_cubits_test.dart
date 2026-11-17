@@ -17,7 +17,7 @@ void main() {
     });
 
     test('lists conversations, most recent first', () async {
-      final store = InMemoryChatStore();
+      final store = steppingStore();
       final ids = await seedTwo(store);
       final cubit = ChatHistoryCubit(store);
       await cubit.load();
@@ -29,7 +29,7 @@ void main() {
 
     test('delete removes one; deleting the last gives the empty state',
         () async {
-      final store = InMemoryChatStore();
+      final store = steppingStore();
       final ids = await seedTwo(store);
       final cubit = ChatHistoryCubit(store);
       await cubit.load();
@@ -87,7 +87,7 @@ void main() {
 
   group('ConversationCubit', () {
     test('loads messages in order', () async {
-      final store = InMemoryChatStore();
+      final store = steppingStore();
       final ids = await seedTwo(store);
       final cubit = ConversationCubit(store, ids.older);
       await cubit.load();

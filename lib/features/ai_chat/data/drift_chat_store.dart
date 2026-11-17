@@ -177,10 +177,17 @@ class DriftChatStore implements ChatStore {
 
   @override
   Future<bool> deleteConversation(String id) async {
-    final count = await (_db.delete(_db.conversationRows)
-          ..where((t) => t.id.equals(id)))
-        .go();
-    return count > 0; // messages follow through ON DELETE CASCADE
+    // Messages are deleted explicitly (and the schema also cascades), so
+    // nothing depends on the foreign_keys pragma being active.
+    return _db.transaction(() async {
+      await (_db.delete(_db.chatMessageRows)
+            ..where((t) => t.conversationId.equals(id)))
+          .go();
+      final count = await (_db.delete(_db.conversationRows)
+            ..where((t) => t.id.equals(id)))
+          .go();
+      return count > 0;
+    });
   }
 
   @override

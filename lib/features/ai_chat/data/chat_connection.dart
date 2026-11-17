@@ -18,6 +18,8 @@ QueryExecutor openChatConnection() {
     final dir = Directory(p.join(base.path, chatDbFolder));
     await dir.create(recursive: true);
     return NativeDatabase.createInBackground(
-        File(p.join(dir.path, chatDbFileName)));
+      File(p.join(dir.path, chatDbFileName)),
+      setup: (db) => db.execute('PRAGMA foreign_keys = ON'),
+    );
   });
 }

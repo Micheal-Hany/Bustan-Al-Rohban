@@ -28,7 +28,7 @@ void main() {
 
   testWidgets('conversations are listed most recent first with title and '
       'scope', (tester) async {
-    final store = InMemoryChatStore();
+    final store = steppingStore();
     final ids = await seedTwo(store);
     await _openChat(tester, store);
     final newer = find.byKey(Key('conversation-${ids.newer}'));
@@ -43,14 +43,16 @@ void main() {
 
   testWidgets('opening a conversation shows its messages in order, and '
       'back returns', (tester) async {
-    final store = InMemoryChatStore();
+    final store = steppingStore();
     final ids = await seedTwo(store);
     await _openChat(tester, store);
     await tester.tap(find.byKey(Key('conversation-${ids.older}')));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('conversation-screen')), findsOneWidget);
-    final q = find.text('سؤال قديم');
-    final a = find.text('جواب قديم');
+    // The title also shows 'سؤال قديم' in the app bar: look inside the list.
+    final list = find.byKey(const Key('conversation-messages'));
+    final q = find.descendant(of: list, matching: find.text('سؤال قديم'));
+    final a = find.descendant(of: list, matching: find.text('جواب قديم'));
     expect(q, findsOneWidget);
     expect(a, findsOneWidget);
     expect(tester.getTopLeft(q).dy, lessThan(tester.getTopLeft(a).dy));
@@ -61,7 +63,7 @@ void main() {
   });
 
   testWidgets('delete removes one conversation', (tester) async {
-    final store = InMemoryChatStore();
+    final store = steppingStore();
     final ids = await seedTwo(store);
     await _openChat(tester, store);
     await tester.tap(find.byKey(Key('conversation-delete-${ids.newer}')));
@@ -136,7 +138,7 @@ void main() {
 
   testWidgets('history is readable without any network (no network code is '
       'involved)', (tester) async {
-    final store = InMemoryChatStore();
+    final store = steppingStore();
     final ids = await seedTwo(store);
     await _openChat(tester, store);
     await tester.tap(find.byKey(Key('conversation-${ids.older}')));

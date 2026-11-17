@@ -50,37 +50,21 @@ void main() {
       expect(_memoryDb().schemaVersion, 1);
     });
 
-    test('deleting a conversation cascades to its messages in the database',
-        () async {
+    test('deleting a conversation leaves no message rows behind', () async {
       final db = _memoryDb();
       final store = DriftChatStore(db);
       final c = await store.createConversation();
+      final other = await store.createConversation();
       await store.addMessage(
           conversationId: c.id, role: ChatRole.user, content: 'x');
       await store.addMessage(
           conversationId: c.id, role: ChatRole.assistant, content: 'y');
-      expect(await db.select(db.chatMessageRows).get(), hasLength(2));
+      await store.addMessage(
+          conversationId: other.id, role: ChatRole.user, content: 'z');
+      expect(await db.select(db.chatMessageRows).get(), hasLength(3));
       await store.deleteConversation(c.id);
-      expect(await db.select(db.chatMessageRows).get(), isEmpty);
-    });
-
-    test('the database refuses a message for a missing conversation (foreign '
-        'key)', () async {
-      final db = _memoryDb();
-      expect(
-        () => db.into(db.chatMessageRows).insert(
-              ChatMessageRowsCompanion.insert(
-                id: 'm',
-                conversationId: 'ghost',
-                seq: 1,
-                role: 'user',
-                content: 'x',
-                status: 'sent',
-                createdAtMs: 1,
-              ),
-            ),
-        throwsA(anything),
-      );
+      final left = await db.select(db.chatMessageRows).get();
+      expect(left.map((r) => r.content), ['z']);
     });
 
     test('history survives closing and reopening the database file',

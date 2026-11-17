@@ -22,7 +22,7 @@ List<({String domain, String path})> _excludes(String xml, String tag) {
 }
 
 void main() {
-  final chatExclude = (domain: 'file', path: '$chatDbFolder/');
+  const chatExclude = (domain: 'file', path: '$chatDbFolder/');
 
   test('the chat database lives in the excluded folder', () {
     expect(chatDbFolder, 'chat');
