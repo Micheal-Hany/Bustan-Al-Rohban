@@ -15,6 +15,8 @@ class AppIcons {
   static const IconData clear = Iconsax.close_circle;
   static const IconData delete = Iconsax.trash;
   static const IconData editorial = Iconsax.note_text;
+  static const IconData send = Iconsax.send_1;
+  static const IconData add = Iconsax.add;
   static const IconData play = Iconsax.play;
   static const IconData pause = Iconsax.pause;
   static const IconData stop = Iconsax.stop;

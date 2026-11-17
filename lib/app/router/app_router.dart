@@ -3,18 +3,18 @@ import 'package:go_router/go_router.dart';
 import '../../core/content/asset_content_source.dart';
 import '../../core/content/preview/content_preview_screen.dart';
 import '../../core/screens/home_screen.dart';
-import '../../core/screens/placeholder_screen.dart';
 import '../../features/bookmarks/presentation/bookmarks_screen.dart';
 import '../../features/library/presentation/book_overview_screen.dart';
 import '../../spikes/tts/tts_spike_screen.dart';
 import '../../features/library/presentation/library_home_screen.dart';
+import '../../features/ai_chat/presentation/chat_history_screen.dart';
+import '../../features/ai_chat/presentation/conversation_screen.dart';
 import '../../features/insights/presentation/insights_screen.dart';
 import '../../features/library/presentation/saint_sections_screen.dart';
 import '../../features/library/presentation/saints_list_screen.dart';
 import '../../features/reader/presentation/reader_screen.dart';
 import '../../features/search/presentation/search_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
-import '../strings.dart';
 
 /// Route paths. Real screens replace placeholders in later tasks.
 class AppRoutes {
@@ -42,6 +42,8 @@ class AppRoutes {
     final path = '$librarySaints/$saintId/sections/$sectionId';
     return paragraphId == null ? path : '$path?p=$paragraphId';
   }
+
+  static String conversation(String id) => '$chat/$id';
 
   static String insights(String saintId, String sectionId) =>
       '$librarySaints/$saintId/sections/$sectionId/insights';
@@ -112,9 +114,12 @@ GoRouter createRouter() {
       ),
       GoRoute(
         path: AppRoutes.chat,
-        builder: (context, state) => const PlaceholderScreen(
-          screenKey: 'chat-screen',
-          title: AppStrings.chat,
+        builder: (context, state) => const ChatHistoryScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.chat}/:conversationId',
+        builder: (context, state) => ConversationScreen(
+          conversationId: state.pathParameters['conversationId']!,
         ),
       ),
       GoRoute(

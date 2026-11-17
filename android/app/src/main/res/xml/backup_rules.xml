@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 11 and lower (android:fullBackupContent). Chat history stays on
+     the device: the whole chat/ folder (database, WAL, journal) is excluded. -->
+<full-backup-content>
+    <exclude domain="file" path="chat/" />
+</full-backup-content>

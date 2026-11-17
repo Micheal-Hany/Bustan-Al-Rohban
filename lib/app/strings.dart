@@ -114,4 +114,29 @@ class AppStrings {
       'الأصوات العربية المتاحة تحتاج إلى الإنترنت، ولن يتم استخدام خدمة عبر '
       'الإنترنت تلقائيًا. ثبّت صوتًا عربيًا يعمل دون إنترنت.';
   static const ttsError = 'تعذر تشغيل القراءة. حاول مرة أخرى.';
+
+  // Chat history (Task 9)
+  static const chatHistoryTitle = 'المحادثات';
+  static const chatPrivacyNote =
+      'تُحفظ المحادثات على جهازك فقط، ولا تُنسخ احتياطيًا. حذف التطبيق أو '
+      'مسح بياناته يحذفها. يمكنك قراءة المحادثات القديمة دون إنترنت.';
+  static const chatEmpty = 'لا توجد محادثات بعد';
+  static const chatNewConversation = 'محادثة جديدة';
+  static const chatDelete = 'حذف المحادثة';
+  static const chatClearAll = 'حذف كل المحادثات';
+  static const chatClearConfirmTitle = 'حذف كل المحادثات؟';
+  static const chatClearConfirmBody =
+      'سيتم حذف كل المحادثات من هذا الجهاز نهائيًا.';
+  static const chatConfirm = 'حذف';
+  static const chatCancel = 'إلغاء';
+  static const chatLoadFailed = 'تعذر تحميل المحادثات';
+  static const chatScopeBook = 'كل الكتاب';
+  static const chatScopeSaint = 'قديس واحد';
+  static const chatScopeSection = 'قسم واحد';
+  static const chatMessageFailed = 'لم تُرسل';
+  static const chatMessagePending = 'جارٍ الإرسال';
+  static const chatEmptyConversation = 'لا توجد رسائل في هذه المحادثة';
+  static const chatTestHint = 'رسالة تجريبية (للتطوير فقط)';
+  static const chatTestReply = '[تجريبي] رد تجريبي - ليس من الكتاب.';
+  static const chatSend = 'إرسال';
 }

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../core/content/asset_content_source.dart';
 import '../core/content/content_loader.dart';
+import '../features/ai_chat/domain/chat_store.dart';
 import '../features/audio/domain/speech_cubit.dart';
 import '../features/audio/domain/tts_engine.dart';
 import '../features/bookmarks/domain/bookmark_store.dart';
@@ -30,12 +31,16 @@ class BustanApp extends StatefulWidget {
     super.key,
     this.libraryRepository,
     this.ttsEngineFactory,
+    this.chatStore,
     this.bookmarkStore,
     this.progressStore,
     this.prefsStore,
   });
 
   final LibraryRepository? libraryRepository;
+
+  /// Local chat history (memory-only by default; `main.dart` passes Drift).
+  final ChatStore? chatStore;
 
   /// Creates the text-to-speech engine on first use (tests pass a fake).
   final TtsEngine Function()? ttsEngineFactory;
@@ -58,6 +63,7 @@ class _BustanAppState extends State<BustanApp> {
       BookmarksCubit(widget.bookmarkStore ?? InMemoryBookmarkStore())..load();
   late final ProgressCubit _progress =
       ProgressCubit(widget.progressStore ?? InMemoryProgressStore())..load();
+  late final ChatStore _chat = widget.chatStore ?? InMemoryChatStore();
   late final SpeechCubit _speech =
       SpeechCubit(widget.ttsEngineFactory ?? FlutterTtsEngine.new);
   late final ReadingPrefsCubit _prefs =
@@ -79,6 +85,7 @@ class _BustanAppState extends State<BustanApp> {
       providers: [
         RepositoryProvider<LibraryRepository>.value(value: _library),
         RepositoryProvider<SearchRepository>.value(value: _search),
+        RepositoryProvider<ChatStore>.value(value: _chat),
       ],
       child: MultiBlocProvider(
         providers: [

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ (android:dataExtractionRules). Chat history is excluded from
+     cloud backup and from device-to-device transfer. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="chat/" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="chat/" />
+    </device-transfer>
+</data-extraction-rules>

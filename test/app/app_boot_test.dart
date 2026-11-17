@@ -47,28 +47,21 @@ void main() {
       }
     });
 
-    testWidgets('can open each placeholder screen and go back (library is a real screen since Task 2)', (tester) async {
-      final cases = {
-        'nav-chat': 'chat-screen',
-      };
-
+    testWidgets('the chat entry opens the conversation list and goes back',
+        (tester) async {
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(const BustanApp());
       await tester.pumpAndSettle();
 
-      for (final entry in cases.entries) {
-        await tester.tap(find.byKey(Key(entry.key)));
-        await tester.pumpAndSettle();
-        expect(find.byKey(Key(entry.value)), findsOneWidget,
-            reason: entry.value);
-        expect(find.text(AppStrings.underConstruction), findsOneWidget);
+      await tester.tap(find.byKey(const Key('nav-chat')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('chat-screen')), findsOneWidget);
 
-        await tester.tap(find.byType(BackButton));
-        await tester.pumpAndSettle();
-        expect(find.byKey(const Key('home-screen')), findsOneWidget);
-      }
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('home-screen')), findsOneWidget);
     });
   });
 }

@@ -74,6 +74,7 @@ flutter pub get
 flutter analyze
 flutter test spikes/tts/
 flutter test test/features/audio/
+flutter test test/features/ai_chat/
 flutter test
 ```
 
@@ -144,3 +145,13 @@ flutter run   # Settings -> change font size/line spacing -> open a section -> r
 ```
 
 Existing bookmarks and progress are kept: the upgrade only adds the new table (covered by a real v1 to v2 upgrade test in `test/core/db/`, which needs sqlite3 like the other Drift tests).
+
+## Task 9 - chat history (generate the database code first)
+
+The chat database needs generated Drift code. Run once after pulling, then commit the result:
+
+```
+dart run build_runner build --delete-conflicting-outputs
+```
+
+This creates `lib/features/ai_chat/data/chat_database.g.dart`. Until it exists, `flutter analyze` reports errors in the chat data files and `main.dart`.
