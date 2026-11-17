@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 
 import '../../../core/db/app_database.dart';
 import '../domain/reading_prefs.dart';

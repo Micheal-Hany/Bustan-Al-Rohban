@@ -14,7 +14,7 @@ void main() {
     });
 
     test('steps are strictly increasing', () {
-      final s = ReadingPrefs.textScaleSteps;
+      const s = ReadingPrefs.textScaleSteps;
       for (var i = 1; i < s.length; i++) {
         expect(s[i], greaterThan(s[i - 1]));
       }

@@ -5,7 +5,6 @@ import 'package:bustan_al_rohban/features/bookmarks/data/drift_bookmark_store.da
 import 'package:bustan_al_rohban/features/reader/progress/drift_progress_store.dart';
 import 'package:bustan_al_rohban/features/settings/data/drift_prefs_store.dart';
 import 'package:bustan_al_rohban/features/settings/domain/reading_prefs.dart';
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';

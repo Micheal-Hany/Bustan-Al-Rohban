@@ -120,18 +120,18 @@ class _Hero extends StatelessWidget {
           BoxShadow(
             color: Color(0x4D5B3A29),
             blurRadius: 18,
-            offset: const Offset(0, 8),
+            offset: Offset(0, 8),
           ),
         ],
       ),
-      child: Column(
+      child: const Column(
         children: [
-          const Icon(AppIcons.library, color: AppTheme.gold, size: 40),
-          const SizedBox(height: 12),
+          Icon(AppIcons.library, color: AppTheme.gold, size: 40),
+          SizedBox(height: 12),
           Text(
             AppStrings.appTitle,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: AppTheme.bookFontFamily,
               fontSize: 38,
               fontWeight: FontWeight.bold,
@@ -139,11 +139,11 @@ class _Hero extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             AppStrings.homeSubtitle,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: AppTheme.fontFamily,
               fontSize: 15,
               color: Color(0xD9FFFFFF),
@@ -174,7 +174,7 @@ class _FeatureTile extends StatelessWidget {
       color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(22),
-        side: BorderSide(color: AppTheme.goldSoft),
+        side: const BorderSide(color: AppTheme.goldSoft),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(22),

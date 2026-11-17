@@ -52,6 +52,9 @@ void main() {
         'nav-chat': 'chat-screen',
       };
 
+      tester.view.physicalSize = const Size(800, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
       await tester.pumpWidget(const BustanApp());
       await tester.pumpAndSettle();
 
