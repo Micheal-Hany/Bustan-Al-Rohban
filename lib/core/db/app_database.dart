@@ -48,20 +48,36 @@ class ProgressRows extends Table {
   Set<Column> get primaryKey => {sectionId};
 }
 
-@DriftDatabase(tables: [BookmarkRows, ProgressRows])
+/// Simple key/value settings (reading preferences, later others).
+@DataClassName('SettingRow')
+class SettingRows extends Table {
+  @override
+  String get tableName => 'app_settings';
+
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
+@DriftDatabase(tables: [BookmarkRows, ProgressRows, SettingRows])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   /// Bump on every table change and add a step in [migration]. See
   /// docs/DB_MIGRATIONS.md.
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) => m.createAll(),
         onUpgrade: (m, from, to) async {
-          // No upgrades yet (version 1 is the first schema).
+          if (from < 2) {
+            // v2 adds the settings table; existing data is untouched.
+            await m.createTable(settingRows);
+          }
         },
         beforeOpen: (details) async {
           await customStatement('PRAGMA foreign_keys = ON');

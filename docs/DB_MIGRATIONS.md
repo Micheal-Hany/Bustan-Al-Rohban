@@ -16,3 +16,4 @@ Local user data (bookmarks, reading progress, and later chat history) is stored 
 | Version | Change |
 |---|---|
 | 1 | `bookmarks` (unique per paragraph + offset) and `reading_progress` (one row per section). |
+| 2 | Added `app_settings` (key/value) for reading preferences. Upgrade creates the table; bookmarks and progress are untouched. |

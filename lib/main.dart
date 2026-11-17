@@ -7,6 +7,7 @@ import 'core/db/app_database.dart';
 import 'core/db/connection.dart';
 import 'features/bookmarks/data/drift_bookmark_store.dart';
 import 'features/reader/progress/drift_progress_store.dart';
+import 'features/settings/data/drift_prefs_store.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,5 +17,6 @@ void main() {
   runApp(BustanApp(
     bookmarkStore: DriftBookmarkStore(db),
     progressStore: DriftProgressStore(db),
+    prefsStore: DriftPrefsStore(db),
   ));
 }

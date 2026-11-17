@@ -50,7 +50,6 @@ void main() {
     testWidgets('can open each placeholder screen and go back (library is a real screen since Task 2)', (tester) async {
       final cases = {
         'nav-chat': 'chat-screen',
-        'nav-settings': 'settings-screen',
       };
 
       await tester.pumpWidget(const BustanApp());

@@ -11,6 +11,8 @@ import '../features/library/data/library_repository.dart';
 import '../features/reader/progress/progress_cubit.dart';
 import '../features/reader/progress/reading_progress.dart';
 import '../features/search/data/search_repository.dart';
+import '../features/settings/domain/reading_prefs.dart';
+import '../features/settings/presentation/reading_prefs_cubit.dart';
 import 'router/app_router.dart';
 import 'strings.dart';
 import 'theme/app_theme.dart';
@@ -20,18 +22,20 @@ class BustanApp extends StatefulWidget {
   /// [libraryRepository] is injectable for tests; by default the installed
   /// book is read from the asset bundle.
   ///
-  /// [bookmarkStore] and [progressStore] default to memory-only stores; the
+  /// [bookmarkStore], [progressStore] and [prefsStore] default to memory-only stores; the
   /// real app (`main.dart`) passes the Drift-backed ones.
   const BustanApp({
     super.key,
     this.libraryRepository,
     this.bookmarkStore,
     this.progressStore,
+    this.prefsStore,
   });
 
   final LibraryRepository? libraryRepository;
   final BookmarkStore? bookmarkStore;
   final ProgressStore? progressStore;
+  final PrefsStore? prefsStore;
 
   @override
   State<BustanApp> createState() => _BustanAppState();
@@ -48,12 +52,15 @@ class _BustanAppState extends State<BustanApp> {
       BookmarksCubit(widget.bookmarkStore ?? InMemoryBookmarkStore())..load();
   late final ProgressCubit _progress =
       ProgressCubit(widget.progressStore ?? InMemoryProgressStore())..load();
+  late final ReadingPrefsCubit _prefs =
+      ReadingPrefsCubit(widget.prefsStore ?? InMemoryPrefsStore())..load();
 
   @override
   void dispose() {
     _router.dispose();
     _bookmarks.close();
     _progress.close();
+    _prefs.close();
     super.dispose();
   }
 
@@ -68,6 +75,7 @@ class _BustanAppState extends State<BustanApp> {
         providers: [
           BlocProvider<BookmarksCubit>.value(value: _bookmarks),
           BlocProvider<ProgressCubit>.value(value: _progress),
+          BlocProvider<ReadingPrefsCubit>.value(value: _prefs),
         ],
         child: MaterialApp.router(
           title: AppStrings.appTitle,

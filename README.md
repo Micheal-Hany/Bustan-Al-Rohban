@@ -126,3 +126,20 @@ flutter run   # bookmark a paragraph, restart the app, open Bookmarks, continue 
 `test/core/db/` opens a real SQLite database. If the sqlite3 native library is missing (for example Windows without `sqlite3.dll`), those tests are **skipped with a message**, not failed. To run them, put `sqlite3.dll` (from sqlite.org, 64-bit) next to the Flutter SDK's `dart.exe` or on your PATH. Everything else uses in-memory stores that run the same contract tests as the Drift stores.
 
 If `build_runner` or `pub get` reports a version conflict, paste the message and I will adjust the versions.
+
+## Task 6 (reading preferences) - run on your machine
+
+The database schema is now **version 2** (adds the `app_settings` table), so Drift's generated code changed. After `git pull`:
+
+```bash
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs   # regenerates lib/core/db/app_database.g.dart
+git add lib/core/db/app_database.g.dart && git commit -m "Task 6: regenerate Drift code" && git push
+flutter analyze
+flutter test test/features/settings/
+flutter test test/core/db/
+flutter test
+flutter run   # Settings -> change font size/line spacing -> open a section -> restart the app
+```
+
+Existing bookmarks and progress are kept: the upgrade only adds the new table (covered by a real v1 to v2 upgrade test in `test/core/db/`, which needs sqlite3 like the other Drift tests).

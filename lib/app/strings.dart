@@ -35,6 +35,20 @@ class AppStrings {
   static const yearLabel = 'السنة';
   static const attributionLabel = 'الإسناد';
   static const aliasesLabel = 'أسماء أخرى';
+  // Settings (Task 6)
+  static const readingSection = 'القراءة';
+  static const fontSizeLabel = 'حجم الخط';
+  static const lineSpacingLabel = 'تباعد الأسطر';
+  static const lineSpacingCompact = 'متقارب';
+  static const lineSpacingNormal = 'عادي';
+  static const lineSpacingRelaxed = 'واسع';
+  static const previewLabel = 'معاينة';
+  static const previewSample =
+      '[تجريبي] هذه فقرة تجريبية لمعاينة حجم الخط وتباعد الأسطر. ليست من الكتاب.';
+  static const resetSize = 'الحجم الافتراضي';
+  static const resetAll = 'استعادة الإعدادات الافتراضية';
+  static const prefsSaveFailed = 'تعذر حفظ الإعدادات';
+
   // Bookmarks and progress (Task 5)
   static const addBookmark = 'إضافة إشارة مرجعية';
   static const removeBookmark = 'إزالة الإشارة المرجعية';

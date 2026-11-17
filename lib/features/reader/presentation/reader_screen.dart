@@ -14,7 +14,8 @@ import '../progress/progress_cubit.dart';
 import '../progress/progress_tracker.dart';
 import 'editorial_card.dart';
 import 'reader_cubit.dart';
-import 'text_scale_cubit.dart';
+import '../../settings/domain/reading_prefs.dart';
+import '../../settings/presentation/reading_prefs_cubit.dart';
 
 /// Reads one section. Original text is rendered exactly as stored.
 class ReaderScreen extends StatelessWidget {
@@ -47,7 +48,6 @@ class ReaderScreen extends StatelessWidget {
             progressLookup: context.read<ProgressCubit>().forSection,
           )..load(),
         ),
-        BlocProvider(create: (_) => TextScaleCubit()),
       ],
       child: const _ReaderView(),
     );
@@ -116,18 +116,19 @@ class _TextSizeControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<TextScaleCubit>();
-    return BlocBuilder<TextScaleCubit, double>(
-      builder: (context, scale) {
+    final cubit = context.read<ReadingPrefsCubit>();
+    return BlocBuilder<ReadingPrefsCubit, ReadingPrefsState>(
+      builder: (context, state) {
+        final prefs = state.prefs;
         return Row(mainAxisSize: MainAxisSize.min, children: [
           IconButton(
             key: const Key('text-smaller'),
             tooltip: AppStrings.textSmaller,
             icon: const Icon(Icons.text_decrease),
-            onPressed: cubit.canDecrease ? cubit.smaller : null,
+            onPressed: prefs.canDecrease ? cubit.smaller : null,
           ),
           Text(
-            '${(scale * 100).round()}%',
+            '${(prefs.textScale * 100).round()}%',
             key: const Key('text-scale-label'),
             textDirection: TextDirection.ltr,
           ),
@@ -135,7 +136,7 @@ class _TextSizeControls extends StatelessWidget {
             key: const Key('text-larger'),
             tooltip: AppStrings.textLarger,
             icon: const Icon(Icons.text_increase),
-            onPressed: cubit.canIncrease ? cubit.larger : null,
+            onPressed: prefs.canIncrease ? cubit.larger : null,
           ),
         ]);
       },
@@ -207,15 +208,17 @@ class _ReaderListState extends State<_ReaderList> {
   @override
   Widget build(BuildContext context) {
     final items = widget.items;
-    return BlocBuilder<TextScaleCubit, double>(
-      builder: (context, scale) {
+    return BlocBuilder<ReadingPrefsCubit, ReadingPrefsState>(
+      buildWhen: (a, b) => a.prefs != b.prefs,
+      builder: (context, state) {
+        final prefs = state.prefs;
         return ScrollablePositionedList.builder(
           key: const Key('reader-list'),
           itemCount: items.length,
           initialScrollIndex: widget.initialIndex,
           itemPositionsListener: _positions,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          itemBuilder: (context, i) => _buildItem(context, items[i], i, scale),
+          itemBuilder: (context, i) => _buildItem(context, items[i], i, prefs),
         );
       },
     );
@@ -225,7 +228,7 @@ class _ReaderListState extends State<_ReaderList> {
     BuildContext context,
     ReaderItem item,
     int index,
-    double scale,
+    ReadingPrefs prefs,
   ) {
     final theme = Theme.of(context);
     switch (item) {
@@ -268,7 +271,8 @@ class _ReaderListState extends State<_ReaderList> {
       case ParagraphItem():
         return _ParagraphView(
           paragraph: item.paragraph,
-          scale: scale,
+          scale: prefs.textScale,
+          lineHeight: prefs.lineSpacing.height,
           onToggleBookmark: () => context.read<BookmarksCubit>().toggle(
                 saintId: widget.saintId,
                 sectionId: widget.sectionId,
@@ -284,11 +288,13 @@ class _ParagraphView extends StatelessWidget {
   const _ParagraphView({
     required this.paragraph,
     required this.scale,
+    required this.lineHeight,
     required this.onToggleBookmark,
   });
 
   final Paragraph paragraph;
   final double scale;
+  final double lineHeight;
   final VoidCallback onToggleBookmark;
 
   @override
@@ -299,7 +305,7 @@ class _ParagraphView extends StatelessWidget {
     final style = base.copyWith(
       fontSize: (heading ? _ReaderList.headingSize : _ReaderList.bodySize) *
           scale,
-      height: 1.9,
+      height: lineHeight,
       fontWeight: heading ? FontWeight.bold : null,
     );
     return Padding(

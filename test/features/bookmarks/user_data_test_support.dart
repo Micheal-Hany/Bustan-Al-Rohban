@@ -3,6 +3,8 @@ import 'package:bustan_al_rohban/features/bookmarks/domain/bookmark_store.dart';
 import 'package:bustan_al_rohban/features/bookmarks/presentation/bookmarks_cubit.dart';
 import 'package:bustan_al_rohban/features/reader/progress/progress_cubit.dart';
 import 'package:bustan_al_rohban/features/reader/progress/reading_progress.dart';
+import 'package:bustan_al_rohban/features/settings/domain/reading_prefs.dart';
+import 'package:bustan_al_rohban/features/settings/presentation/reading_prefs_cubit.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,6 +14,7 @@ Widget withUserData(
   Widget child, {
   BookmarkStore? bookmarks,
   ProgressStore? progress,
+  PrefsStore? prefs,
 }) {
   return MultiBlocProvider(
     providers: [
@@ -22,6 +25,10 @@ Widget withUserData(
       BlocProvider(
         create: (_) =>
             ProgressCubit(progress ?? InMemoryProgressStore())..load(),
+      ),
+      BlocProvider(
+        create: (_) =>
+            ReadingPrefsCubit(prefs ?? InMemoryPrefsStore())..load(),
       ),
     ],
     child: child,
