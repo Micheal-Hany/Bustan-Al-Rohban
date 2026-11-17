@@ -21,7 +21,7 @@ dependencies:
   path: ^1.9.0
   scrollable_positioned_list: ^0.3.8
   # Spike S1 only (TTS feasibility); revisit in Task 8.
-  flutter_tts: ^4.0.2
+  flutter_tts: ^4.2.5
 
 dev_dependencies:
   flutter_test:
