@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app/strings.dart';
 import '../domain/reading_prefs.dart';
 import 'reading_prefs_cubit.dart';
+import '../../../app/theme/app_icons.dart';
 
 /// Settings. Version 1 has reading preferences; dark mode comes in Task 12b.
 class SettingsScreen extends StatelessWidget {
@@ -43,7 +44,7 @@ class SettingsScreen extends StatelessWidget {
                 IconButton(
                   key: const Key('settings-text-smaller'),
                   tooltip: AppStrings.textSmaller,
-                  icon: const Icon(Icons.text_decrease),
+                  icon: const Icon(AppIcons.textSmaller),
                   onPressed: prefs.canDecrease ? cubit.smaller : null,
                 ),
                 Text(
@@ -54,7 +55,7 @@ class SettingsScreen extends StatelessWidget {
                 IconButton(
                   key: const Key('settings-text-larger'),
                   tooltip: AppStrings.textLarger,
-                  icon: const Icon(Icons.text_increase),
+                  icon: const Icon(AppIcons.textLarger),
                   onPressed: prefs.canIncrease ? cubit.larger : null,
                 ),
                 const Spacer(),

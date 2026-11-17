@@ -6,6 +6,7 @@ import '../../../app/router/app_router.dart';
 import '../../../app/strings.dart';
 import '../../library/data/library_repository.dart';
 import 'progress_cubit.dart';
+import '../../../app/theme/app_icons.dart';
 
 /// "Continue reading": opens the last reading position. The location is
 /// resolved from the paragraph ID, so it still works after content re-ordering.
@@ -30,7 +31,7 @@ class ResumeCard extends StatelessWidget {
               color: Theme.of(context).colorScheme.secondaryContainer,
               child: ListTile(
                 key: const Key('resume-card'),
-                leading: const Icon(Icons.play_circle_outline),
+                leading: const Icon(AppIcons.resume),
                 title: const Text(AppStrings.continueReading),
                 subtitle: Text('${loc.saint.title} › ${loc.section.title}'),
                 onTap: () => context.push(AppRoutes.section(

@@ -15,6 +15,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/content/test_support.dart';
 import '../bookmarks/user_data_test_support.dart';
 import '../library/library_test_support.dart';
+import 'package:bustan_al_rohban/app/theme/app_icons.dart';
 
 const _diacritics = 'السَّلَامُ  عَلَيْكُمْ\nوَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ ';
 
@@ -279,7 +280,7 @@ void main() {
       final card = find.byKey(const Key('editorial-fake-ins-sec-a-001'));
       expect(card, findsOneWidget);
       expect(find.text(AppStrings.editorialLabel), findsOneWidget);
-      expect(find.byIcon(Icons.edit_note), findsOneWidget);
+      expect(find.byIcon(AppIcons.editorial), findsOneWidget);
       // Not an original paragraph: no paragraph key, different container.
       expect(
         find.descendant(of: card, matching: find.byType(Container)),

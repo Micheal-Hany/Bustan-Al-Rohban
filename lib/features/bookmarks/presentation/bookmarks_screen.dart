@@ -9,6 +9,7 @@ import '../../library/data/library_repository.dart';
 import '../../library/presentation/load_status.dart';
 import 'bookmark_list_cubit.dart';
 import 'bookmarks_cubit.dart';
+import '../../../app/theme/app_icons.dart';
 
 class BookmarksScreen extends StatelessWidget {
   const BookmarksScreen({super.key});
@@ -76,14 +77,14 @@ class _BookmarkTile extends StatelessWidget {
     final delete = IconButton(
       key: Key('bookmark-delete-${b.id}'),
       tooltip: AppStrings.deleteBookmark,
-      icon: const Icon(Icons.delete_outline),
+      icon: const Icon(AppIcons.delete),
       onPressed: () => context.read<BookmarkListCubit>().remove(b.id),
     );
     if (loc == null) {
       return Card(
         child: ListTile(
           key: Key('bookmark-tile-${b.id}'),
-          leading: const Icon(Icons.bookmark_remove_outlined),
+          leading: const Icon(AppIcons.bookmarkOff),
           title: const Text(AppStrings.bookmarkUnavailable),
           trailing: delete,
         ),
@@ -95,7 +96,7 @@ class _BookmarkTile extends StatelessWidget {
     return Card(
       child: ListTile(
         key: Key('bookmark-tile-${b.id}'),
-        leading: const Icon(Icons.bookmark),
+        leading: const Icon(AppIcons.bookmarkOn),
         title: Text('${loc.saint.title} › ${loc.section.title}'),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

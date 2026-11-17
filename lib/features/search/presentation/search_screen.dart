@@ -8,6 +8,7 @@ import '../../../core/search/snippet.dart';
 import '../../../core/widgets/status_views.dart';
 import '../data/search_repository.dart';
 import 'search_cubit.dart';
+import '../../../app/theme/app_icons.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
@@ -53,17 +54,16 @@ class _SearchViewState extends State<_SearchView> {
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
                 hintText: AppStrings.searchHint,
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(AppIcons.search),
                 suffixIcon: IconButton(
                   key: const Key('search-clear'),
                   tooltip: AppStrings.searchClear,
-                  icon: const Icon(Icons.clear),
+                  icon: const Icon(AppIcons.clear),
                   onPressed: () {
                     _controller.clear();
                     cubit.queryChanged('');
                   },
                 ),
-                border: const OutlineInputBorder(),
               ),
               onChanged: cubit.queryChanged,
               onSubmitted: cubit.submit,

@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../library/library_test_support.dart';
 import '../search/search_test_support.dart';
 import 'user_data_test_support.dart';
+import 'package:bustan_al_rohban/app/theme/app_icons.dart';
 
 const _sectionPath = '/library/book/saints/saint-a/sections/sec-a-001';
 
@@ -52,10 +53,10 @@ void main() {
       await _pumpApp(tester, store);
       await _openReader(tester);
 
-      expect(_iconOf(tester, 'p-000002'), Icons.bookmark_border);
+      expect(_iconOf(tester, 'p-000002'), AppIcons.bookmarkOff);
       await tester.tap(find.byKey(const Key('bookmark-p-000002')));
       await tester.pumpAndSettle();
-      expect(_iconOf(tester, 'p-000002'), Icons.bookmark);
+      expect(_iconOf(tester, 'p-000002'), AppIcons.bookmarkOn);
 
       final saved = await store.all();
       expect(saved, hasLength(1));
@@ -67,7 +68,7 @@ void main() {
 
       await tester.tap(find.byKey(const Key('bookmark-p-000002')));
       await tester.pumpAndSettle();
-      expect(_iconOf(tester, 'p-000002'), Icons.bookmark_border);
+      expect(_iconOf(tester, 'p-000002'), AppIcons.bookmarkOff);
       expect(await store.all(), isEmpty);
     });
 
@@ -82,8 +83,8 @@ void main() {
       );
       await _pumpApp(tester, store);
       await _openReader(tester);
-      expect(_iconOf(tester, 'p-000001'), Icons.bookmark);
-      expect(_iconOf(tester, 'p-000002'), Icons.bookmark_border);
+      expect(_iconOf(tester, 'p-000001'), AppIcons.bookmarkOn);
+      expect(_iconOf(tester, 'p-000002'), AppIcons.bookmarkOff);
     });
 
     testWidgets('a failed save shows a message and keeps the old state',
@@ -95,7 +96,7 @@ void main() {
       await tester.tap(find.byKey(const Key('bookmark-p-000001')));
       await tester.pumpAndSettle();
       expect(find.text(AppStrings.bookmarkSaveFailed), findsOneWidget);
-      expect(_iconOf(tester, 'p-000001'), Icons.bookmark_border);
+      expect(_iconOf(tester, 'p-000001'), AppIcons.bookmarkOff);
     });
 
     testWidgets('bookmark buttons have accessible labels', (tester) async {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/strings.dart';
 import '../domain/editorial.dart';
+import '../../../app/theme/app_icons.dart';
 
 /// Editorial text (not from the book). Distinguished by icon, label, border
 /// and background, so it never relies on colour alone.
@@ -25,7 +26,7 @@ class EditorialCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            Icon(Icons.edit_note, color: scheme.onTertiaryContainer),
+            Icon(AppIcons.editorial, color: scheme.onTertiaryContainer),
             const SizedBox(width: 8),
             Expanded(
               child: Text(

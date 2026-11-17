@@ -16,6 +16,8 @@ import 'editorial_card.dart';
 import 'reader_cubit.dart';
 import '../../settings/domain/reading_prefs.dart';
 import '../../settings/presentation/reading_prefs_cubit.dart';
+import '../../../app/theme/app_icons.dart';
+import '../../../app/theme/app_theme.dart';
 
 /// Reads one section. Original text is rendered exactly as stored.
 class ReaderScreen extends StatelessWidget {
@@ -124,7 +126,7 @@ class _TextSizeControls extends StatelessWidget {
           IconButton(
             key: const Key('text-smaller'),
             tooltip: AppStrings.textSmaller,
-            icon: const Icon(Icons.text_decrease),
+            icon: const Icon(AppIcons.textSmaller),
             onPressed: prefs.canDecrease ? cubit.smaller : null,
           ),
           Text(
@@ -135,7 +137,7 @@ class _TextSizeControls extends StatelessWidget {
           IconButton(
             key: const Key('text-larger'),
             tooltip: AppStrings.textLarger,
-            icon: const Icon(Icons.text_increase),
+            icon: const Icon(AppIcons.textLarger),
             onPressed: prefs.canIncrease ? cubit.larger : null,
           ),
         ]);
@@ -306,6 +308,8 @@ class _ParagraphView extends StatelessWidget {
       fontSize: (heading ? _ReaderList.headingSize : _ReaderList.bodySize) *
           scale,
       height: lineHeight,
+      fontFamily: AppTheme.bookFontFamily,
+      color: AppTheme.ink,
       fontWeight: heading ? FontWeight.bold : null,
     );
     return Padding(
@@ -328,7 +332,7 @@ class _ParagraphView extends StatelessWidget {
               key: Key('bookmark-${paragraph.id}'),
               tooltip:
                   marked ? AppStrings.removeBookmark : AppStrings.addBookmark,
-              icon: Icon(marked ? Icons.bookmark : Icons.bookmark_border),
+              icon: Icon(marked ? AppIcons.bookmarkOn : AppIcons.bookmarkOff),
               onPressed: onToggleBookmark,
             ),
           ),
