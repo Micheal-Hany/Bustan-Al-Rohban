@@ -84,4 +84,20 @@ class AppStrings {
   static const paragraphsWord = 'فقرات';
   static const pageWord = 'ص';
   static const pagesUnknown = 'الصفحة غير معروفة';
+
+  // Insights (Task 7)
+  static const insights = 'الرؤى المُعدّة';
+  static const insightsLabel = 'رؤى مُعدّة - ليست من نص الكتاب';
+  static const insightSummary = 'الملخص';
+  static const insightKeyPoints = 'النقاط الرئيسية';
+  static const insightLessons = 'الدروس الروحية';
+  static const insightKeywords = 'كلمات مفتاحية';
+  static const insightSources = 'فقرات الكتاب المرتبطة';
+  static const insightOriginAi = 'مسودة بالذكاء الاصطناعي';
+  static const insightOriginHuman = 'إعداد بشري';
+  static const insightApproved = 'معتمد';
+  static const insightNotApproved = 'غير معتمد - للمراجعة فقط';
+  static const insightsNone = 'لا توجد رؤى لهذا القسم';
+  static const backToText = 'العودة إلى النص الأصلي';
+  static const paragraphWord = 'فقرة';
 }

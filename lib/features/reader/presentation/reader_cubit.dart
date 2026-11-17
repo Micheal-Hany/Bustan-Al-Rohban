@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../app/strings.dart';
 import '../../../core/content/content_models.dart';
+import '../../insights/domain/insight.dart';
 import '../../library/data/library_repository.dart';
 import '../../library/presentation/load_status.dart';
 import '../domain/editorial.dart';
@@ -18,6 +19,7 @@ class ReaderState {
     this.items = const [],
     this.initialIndex = 0,
     this.contentVersion = 1,
+    this.insights = const [],
     this.message,
     this.error,
   });
@@ -32,6 +34,9 @@ class ReaderState {
 
   /// Content version of the installed book (saved with bookmarks/progress).
   final int contentVersion;
+
+  /// Insights that may be shown for this section (may be empty).
+  final List<Insight> insights;
 
   /// Text for the empty state.
   final String? message;
@@ -102,9 +107,11 @@ class ReaderCubit extends Cubit<ReaderState> {
         final saved = await progressLookup!(section.id);
         if (saved != null) anchor = indexOfParagraph(items, saved.paragraphId);
       }
+      final insights = await _repository.insightsFor(saint, section.id);
       if (isClosed) return;
       emit(ReaderState(
         status: LoadStatus.loaded,
+        insights: insights,
         saint: saint,
         section: section,
         items: items,

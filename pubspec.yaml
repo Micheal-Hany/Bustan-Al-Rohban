@@ -37,6 +37,7 @@ flutter:
   assets:
     - assets/content/
     - assets/content/saints/
+    - assets/content/insights/
     # Debug-only invalid fixture; removed from release builds in Task 13.
     - assets/content_fixtures/invalid/
     - assets/content_fixtures/invalid/saints/

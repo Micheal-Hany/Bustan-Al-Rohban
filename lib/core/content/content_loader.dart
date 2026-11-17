@@ -2,6 +2,7 @@ import 'content_issue.dart';
 import 'content_models.dart';
 import 'content_source.dart';
 import 'content_validator.dart';
+import '../../features/insights/domain/insight.dart';
 
 class LoadedBook {
   const LoadedBook(this.book, this.warnings);
@@ -106,5 +107,14 @@ class ContentLoader {
     final book = result.book;
     if (book == null) throw ContentValidationException(result.report);
     return LoadedBook(book, result.report.warnings);
+  }
+
+  /// Loads the optional insights file of a saint (`insights/<id>.insights.json`).
+  /// A missing file simply means "no insights" (empty, no issues).
+  Future<InsightParseResult> loadInsights(Saint saint) async {
+    final file = 'insights/${saint.id}.insights.json';
+    final text = await _tryRead(file);
+    if (text == null) return const InsightParseResult([], []);
+    return parseInsights(text, saint, file: file);
   }
 }

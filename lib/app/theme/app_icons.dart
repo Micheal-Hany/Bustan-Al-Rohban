@@ -15,6 +15,7 @@ class AppIcons {
   static const IconData clear = Iconsax.close_circle;
   static const IconData delete = Iconsax.trash;
   static const IconData editorial = Iconsax.note_text;
+  static const IconData insights = Iconsax.lamp_on;
   static const IconData textSmaller = Iconsax.minus;
   static const IconData textLarger = Iconsax.add;
   static const IconData resume = Iconsax.play_circle;

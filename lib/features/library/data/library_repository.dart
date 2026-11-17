@@ -1,5 +1,9 @@
 import '../../../core/content/content_loader.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
+
+import '../../../core/content/content_issue.dart';
 import '../../../core/content/content_models.dart';
+import '../../insights/domain/insight.dart';
 
 class SaintNotFoundException implements Exception {
   const SaintNotFoundException(this.saintId);
@@ -27,9 +31,16 @@ class ParagraphLocation {
 /// file on demand, then caches them. Failures are never cached, so a retry
 /// really retries.
 class LibraryRepository {
-  LibraryRepository(this._loader);
+  /// [showUnapproved] shows draft insights (debug builds only by default).
+  LibraryRepository(this._loader, {bool? showUnapproved})
+      : showUnapproved = showUnapproved ?? !kReleaseMode;
 
   final ContentLoader _loader;
+  final bool showUnapproved;
+  final Map<String, InsightParseResult> _insightCache = {};
+
+  /// Problems found in insight files (for the owner; never shown to readers).
+  final List<ContentIssue> insightIssues = [];
   ContentManifest? _manifestCache;
   final Map<String, Saint> _saintCache = {};
 
@@ -59,6 +70,36 @@ class LibraryRepository {
     final saint = await _loader.loadSaint(e);
     _saintCache[saintId] = saint;
     return saint;
+  }
+
+  /// Insights of one section that may be shown (release rule applied).
+  /// An invalid or unreadable insights file yields none and is recorded in
+  /// [insightIssues]; it never breaks reading.
+  Future<List<Insight>> insightsFor(Saint saint, String sectionId) async {
+    var result = _insightCache[saint.id];
+    if (result == null) {
+      try {
+        result = await _loader.loadInsights(saint);
+      } catch (e) {
+        result = InsightParseResult(const [], [
+          ContentIssue(
+            severity: IssueSeverity.error,
+            code: 'insights-unreadable',
+            file: 'insights/${saint.id}.insights.json',
+            message: '$e',
+          ),
+        ]);
+      }
+      _insightCache[saint.id] = result;
+      insightIssues.addAll(result.issues);
+    }
+    // An invalid file shows nothing at all (all-or-nothing, safest).
+    if (result.hasErrors) return const [];
+    return [
+      for (final i in visibleInsights(result.insights,
+          showUnapproved: showUnapproved))
+        if (i.sectionId == sectionId) i,
+    ];
   }
 
   /// Finds a paragraph by its stable ID, wherever it currently is in the book

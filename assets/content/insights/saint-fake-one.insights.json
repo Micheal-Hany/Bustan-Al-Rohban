@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "saintId": "saint-fake-one",
+  "contentVersion": 1,
+  "insights": [
+    {
+      "id": "ins-fake-one-001",
+      "sectionId": "sec-fake-one-001",
+      "summary": "[تجريبي] ملخص تجريبي للقسم الأول، وليس من الكتاب.",
+      "keyPoints": [
+        "[تجريبي] نقطة رئيسية أولى",
+        "[تجريبي] نقطة رئيسية ثانية"
+      ],
+      "spiritualLessons": [
+        "[تجريبي] درس روحي تجريبي"
+      ],
+      "keywords": [
+        "تجريبي",
+        "اختبار"
+      ],
+      "supportingParagraphIds": [
+        "p-000001",
+        "p-000002"
+      ],
+      "origin": "ai_draft",
+      "reviewStatus": "approved",
+      "reviewedBy": "fake-owner",
+      "reviewedAt": "2000-01-01",
+      "fixture": true
+    },
+    {
+      "id": "ins-fake-one-002",
+      "sectionId": "sec-fake-one-001",
+      "summary": "[تجريبي] مسودة غير معتمدة - تظهر في وضع التطوير فقط.",
+      "keyPoints": [
+        "[تجريبي] نقطة من المسودة"
+      ],
+      "spiritualLessons": [],
+      "keywords": [],
+      "supportingParagraphIds": [
+        "p-000003"
+      ],
+      "origin": "human",
+      "reviewStatus": "draft",
+      "fixture": true
+    },
+    {
+      "id": "ins-fake-one-003",
+      "sectionId": "sec-fake-one-002",
+      "summary": "[تجريبي] رؤية مرفوضة - لا تظهر أبدا.",
+      "keyPoints": [],
+      "spiritualLessons": [],
+      "keywords": [],
+      "supportingParagraphIds": [
+        "p-000005"
+      ],
+      "origin": "ai_draft",
+      "reviewStatus": "rejected",
+      "fixture": true
+    }
+  ]
+}

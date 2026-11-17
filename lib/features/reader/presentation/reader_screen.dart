@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import 'package:go_router/go_router.dart';
+
+import '../../../app/router/app_router.dart';
 import '../../../app/strings.dart';
 import '../../../core/content/content_models.dart';
 import '../../../core/widgets/status_views.dart';
@@ -81,7 +84,17 @@ class _ReaderView extends StatelessWidget {
               state.section?.title ?? state.saint?.title ?? AppStrings.library,
             ),
             actions: state.status == LoadStatus.loaded
-                ? const [_TextSizeControls()]
+                ? [
+                    if (state.insights.isNotEmpty)
+                      IconButton(
+                        key: const Key('reader-insights-button'),
+                        tooltip: AppStrings.insights,
+                        icon: const Icon(AppIcons.insights),
+                        onPressed: () => context.push(AppRoutes.insights(
+                            state.saint!.id, state.section!.id)),
+                      ),
+                    const _TextSizeControls(),
+                  ]
                 : null,
           ),
           body: _body(context, state),

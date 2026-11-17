@@ -8,6 +8,7 @@ import '../../features/bookmarks/presentation/bookmarks_screen.dart';
 import '../../features/library/presentation/book_overview_screen.dart';
 import '../../spikes/tts/tts_spike_screen.dart';
 import '../../features/library/presentation/library_home_screen.dart';
+import '../../features/insights/presentation/insights_screen.dart';
 import '../../features/library/presentation/saint_sections_screen.dart';
 import '../../features/library/presentation/saints_list_screen.dart';
 import '../../features/reader/presentation/reader_screen.dart';
@@ -41,6 +42,9 @@ class AppRoutes {
     final path = '$librarySaints/$saintId/sections/$sectionId';
     return paragraphId == null ? path : '$path?p=$paragraphId';
   }
+
+  static String insights(String saintId, String sectionId) =>
+      '$librarySaints/$saintId/sections/$sectionId/insights';
 
   static const all = [
     home,
@@ -89,6 +93,13 @@ GoRouter createRouter() {
           saintId: state.pathParameters['saintId']!,
           sectionId: state.pathParameters['sectionId']!,
           paragraphId: state.uri.queryParameters['p'],
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.librarySaints}/:saintId/sections/:sectionId/insights',
+        builder: (context, state) => InsightsScreen(
+          saintId: state.pathParameters['saintId']!,
+          sectionId: state.pathParameters['sectionId']!,
         ),
       ),
       GoRoute(
