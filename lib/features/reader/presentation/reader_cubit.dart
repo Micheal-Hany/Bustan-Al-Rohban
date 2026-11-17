@@ -7,6 +7,7 @@ import '../../../core/content/content_models.dart';
 import '../../insights/domain/insight.dart';
 import '../../library/data/library_repository.dart';
 import '../../library/presentation/load_status.dart';
+import '../../audio/domain/speech_plan.dart';
 import '../domain/editorial.dart';
 import '../domain/reader_items.dart';
 import '../progress/reading_progress.dart';
@@ -20,6 +21,7 @@ class ReaderState {
     this.initialIndex = 0,
     this.contentVersion = 1,
     this.insights = const [],
+    this.speechPlan = const [],
     this.message,
     this.error,
   });
@@ -34,6 +36,9 @@ class ReaderState {
 
   /// Content version of the installed book (saved with bookmarks/progress).
   final int contentVersion;
+
+  /// What reading aloud speaks for this section.
+  final List<SpeechSegment> speechPlan;
 
   /// Insights that may be shown for this section (may be empty).
   final List<Insight> insights;
@@ -112,6 +117,7 @@ class ReaderCubit extends Cubit<ReaderState> {
       emit(ReaderState(
         status: LoadStatus.loaded,
         insights: insights,
+        speechPlan: buildSpeechPlan(section.paragraphs),
         saint: saint,
         section: section,
         items: items,

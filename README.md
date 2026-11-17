@@ -73,6 +73,7 @@ Unverified until you run it. After `git pull`:
 flutter pub get
 flutter analyze
 flutter test spikes/tts/
+flutter test test/features/audio/
 flutter test
 ```
 

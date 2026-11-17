@@ -58,15 +58,19 @@ class SpeechCubit extends Cubit<SpeechState> {
   final TtsEngine Function() _engineFactory;
   TtsEngine? _engineInstance;
   List<SpeechSegment> _plan = const [];
+
+  /// Identifies which section the loaded plan belongs to.
+  String? planKey;
   int _index = 0;
   int _generation = 0;
 
   TtsEngine get _engine => _engineInstance ??= _engineFactory();
 
   /// Replaces the plan (stops anything playing first).
-  Future<void> load(List<SpeechSegment> plan) async {
+  Future<void> load(List<SpeechSegment> plan, {String? key}) async {
     await stop();
     if (isClosed) return;
+    planKey = key;
     _plan = plan;
     _index = 0;
     emit(const SpeechState().copyWith(
@@ -75,6 +79,8 @@ class SpeechCubit extends Cubit<SpeechState> {
       hasPlan: plan.isNotEmpty,
     ));
   }
+
+  bool owns(String key) => planKey == key;
 
   /// While not playing, makes the next [play] start at this paragraph.
   void seekTo(String paragraphId) {

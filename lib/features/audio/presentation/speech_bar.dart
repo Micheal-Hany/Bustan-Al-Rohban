@@ -4,19 +4,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app/strings.dart';
 import '../../../app/theme/app_icons.dart';
 import '../domain/speech_cubit.dart';
+import '../domain/speech_plan.dart';
 import '../domain/tts_engine.dart';
 
 /// Play / pause / stop / speed for the section being read, plus a clear
 /// message when no usable Arabic voice exists.
 class SpeechBar extends StatelessWidget {
-  const SpeechBar({super.key});
+  const SpeechBar({super.key, required this.plan, required this.planKey});
+
+  /// What this section speaks, and its identity. If another section's plan
+  /// is loaded (e.g. after returning to this screen), it is reloaded first.
+  final List<SpeechSegment> plan;
+  final String planKey;
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SpeechCubit>();
     return BlocBuilder<SpeechCubit, SpeechState>(
       builder: (context, state) {
-        if (!state.hasPlan) return const SizedBox.shrink();
         final message = switch (state.status) {
           SpeechStatus.unavailable =>
             state.support == ArabicSupport.onlineOnly
@@ -52,8 +57,7 @@ class SpeechBar extends StatelessWidget {
                           : AppStrings.ttsPlay,
                       icon: Icon(
                           state.isPlaying ? AppIcons.pause : AppIcons.play),
-                      onPressed:
-                          state.isPlaying ? cubit.pause : cubit.play,
+                      onPressed: state.isPlaying ? cubit.pause : _play(cubit),
                     ),
                     IconButton(
                       key: const Key('tts-stop'),
@@ -88,6 +92,11 @@ class SpeechBar extends StatelessWidget {
       },
     );
   }
+
+  VoidCallback _play(SpeechCubit cubit) => () async {
+        if (!cubit.owns(planKey)) await cubit.load(plan, key: planKey);
+        await cubit.play();
+      };
 
   static String _fmt(double r) =>
       r == r.roundToDouble() ? r.toStringAsFixed(0) : '$r';

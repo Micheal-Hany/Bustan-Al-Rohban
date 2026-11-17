@@ -266,6 +266,15 @@ void main() {
     expect(cubit.state.hasPlan, isTrue);
   });
 
+  test('a plan is tied to its key (owns)', () async {
+    await cubit.load(_plan(), key: 'saint-a/sec-1');
+    expect(cubit.owns('saint-a/sec-1'), isTrue);
+    expect(cubit.owns('saint-a/sec-2'), isFalse);
+    await cubit.load(const [SpeechSegment(paragraphId: 'z', text: 'z')],
+        key: 'saint-a/sec-2');
+    expect(cubit.owns('saint-a/sec-1'), isFalse);
+  });
+
   test('closing the cubit disposes the engine', () async {
     await cubit.load(_plan());
     await cubit.play();

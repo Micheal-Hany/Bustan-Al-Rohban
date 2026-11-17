@@ -102,7 +102,12 @@ class _ReaderView extends StatelessWidget {
           ),
           body: _body(context, state),
           bottomNavigationBar:
-              state.status == LoadStatus.loaded ? const SpeechBar() : null,
+              state.status == LoadStatus.loaded && state.speechPlan.isNotEmpty
+                  ? SpeechBar(
+                      plan: state.speechPlan,
+                      planKey: '${state.saint!.id}/${state.section!.id}',
+                    )
+                  : null,
         );
       },
     );
@@ -126,6 +131,7 @@ class _ReaderView extends StatelessWidget {
           saintId: state.saint!.id,
           sectionId: state.section!.id,
           contentVersion: state.contentVersion,
+          speechPlan: state.speechPlan,
         );
     }
   }
@@ -171,8 +177,10 @@ class _ReaderList extends StatefulWidget {
     required this.saintId,
     required this.sectionId,
     required this.contentVersion,
+    required this.speechPlan,
   });
 
+  final List<SpeechSegment> speechPlan;
   final List<ReaderItem> items;
   final int initialIndex;
   final String saintId;
@@ -192,6 +200,7 @@ class _ReaderListState extends State<_ReaderList> {
   late final ProgressCubit _progress;
   late final ProgressTracker _tracker;
   late final SpeechCubit _speech;
+  String get _speechKey => '${widget.saintId}/${widget.sectionId}';
 
   @override
   void initState() {
@@ -208,10 +217,11 @@ class _ReaderListState extends State<_ReaderList> {
       ),
     );
     _speech = context.read<SpeechCubit>();
-    _speech.load(buildSpeechPlan([
-      for (final item in widget.items)
-        if (item is ParagraphItem) item.paragraph,
-    ]));
+    // After the first frame: loading may stop a previous section's speech,
+    // which must not notify listeners while this widget is being built.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _speech.load(widget.speechPlan, key: _speechKey);
+    });
     _positions.itemPositions.addListener(_onPositions);
   }
 
@@ -254,7 +264,8 @@ class _ReaderListState extends State<_ReaderList> {
   void dispose() {
     _positions.itemPositions.removeListener(_onPositions);
     _tracker.dispose(); // saves the last position
-    _speech.stop(); // reading aloud never continues after leaving the text
+    // Reading aloud never continues after leaving the text it belongs to.
+    if (_speech.owns(_speechKey)) _speech.stop();
     super.dispose();
   }
 
