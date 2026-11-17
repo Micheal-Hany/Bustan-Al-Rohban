@@ -8,7 +8,10 @@ import '../../../core/widgets/status_views.dart';
 import '../../library/data/library_repository.dart';
 import '../../library/presentation/load_status.dart';
 import '../domain/editorial.dart';
+import '../../bookmarks/presentation/bookmarks_cubit.dart';
 import '../domain/reader_items.dart';
+import '../progress/progress_cubit.dart';
+import '../progress/progress_tracker.dart';
 import 'editorial_card.dart';
 import 'reader_cubit.dart';
 import 'text_scale_cubit.dart';
@@ -41,6 +44,7 @@ class ReaderScreen extends StatelessWidget {
             sectionId: sectionId,
             paragraphId: paragraphId,
             editorial: editorial,
+            progressLookup: context.read<ProgressCubit>().forSection,
           )..load(),
         ),
         BlocProvider(create: (_) => TextScaleCubit()),
@@ -55,6 +59,17 @@ class _ReaderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocListener<BookmarksCubit, BookmarksState>(
+      listenWhen: (previous, current) => current.error != null,
+      listener: (context, state) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(state.error!)));
+      },
+      child: _readerBody(),
+    );
+  }
+
+  Widget _readerBody() {
     return BlocBuilder<ReaderCubit, ReaderState>(
       builder: (context, state) {
         return Scaffold(
@@ -88,6 +103,9 @@ class _ReaderView extends StatelessWidget {
         return _ReaderList(
           items: state.items,
           initialIndex: state.initialIndex,
+          saintId: state.saint!.id,
+          sectionId: state.section!.id,
+          contentVersion: state.contentVersion,
         );
     }
   }
@@ -125,23 +143,77 @@ class _TextSizeControls extends StatelessWidget {
   }
 }
 
-class _ReaderList extends StatelessWidget {
-  const _ReaderList({required this.items, required this.initialIndex});
+class _ReaderList extends StatefulWidget {
+  const _ReaderList({
+    required this.items,
+    required this.initialIndex,
+    required this.saintId,
+    required this.sectionId,
+    required this.contentVersion,
+  });
 
   final List<ReaderItem> items;
   final int initialIndex;
+  final String saintId;
+  final String sectionId;
+  final int contentVersion;
 
   static const double bodySize = 18;
   static const double headingSize = 21;
 
   @override
+  State<_ReaderList> createState() => _ReaderListState();
+}
+
+class _ReaderListState extends State<_ReaderList> {
+  final _positions = ItemPositionsListener.create();
+  late final ProgressCubit _progress;
+  late final ProgressTracker _tracker;
+
+  @override
+  void initState() {
+    super.initState();
+    // Read here: context lookups are not allowed in dispose().
+    _progress = context.read<ProgressCubit>();
+    _tracker = ProgressTracker(
+      items: widget.items,
+      onSave: (paragraphId) => _progress.record(
+        saintId: widget.saintId,
+        sectionId: widget.sectionId,
+        paragraphId: paragraphId,
+        contentVersion: widget.contentVersion,
+      ),
+    );
+    _positions.itemPositions.addListener(_onPositions);
+  }
+
+  void _onPositions() {
+    int? first;
+    for (final p in _positions.itemPositions.value) {
+      if (p.itemTrailingEdge > 0 && (first == null || p.index < first)) {
+        first = p.index;
+      }
+    }
+    if (first != null) _tracker.visibleChanged(first);
+  }
+
+  @override
+  void dispose() {
+    _positions.itemPositions.removeListener(_onPositions);
+    _tracker.dispose(); // saves the last position
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final items = widget.items;
     return BlocBuilder<TextScaleCubit, double>(
       builder: (context, scale) {
         return ScrollablePositionedList.builder(
           key: const Key('reader-list'),
           itemCount: items.length,
-          initialScrollIndex: initialIndex,
+          initialScrollIndex: widget.initialIndex,
+          itemPositionsListener: _positions,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           itemBuilder: (context, i) => _buildItem(context, items[i], i, scale),
         );
@@ -194,16 +266,30 @@ class _ReaderList extends StatelessWidget {
           ]),
         );
       case ParagraphItem():
-        return _ParagraphView(paragraph: item.paragraph, scale: scale);
+        return _ParagraphView(
+          paragraph: item.paragraph,
+          scale: scale,
+          onToggleBookmark: () => context.read<BookmarksCubit>().toggle(
+                saintId: widget.saintId,
+                sectionId: widget.sectionId,
+                paragraphId: item.paragraph.id,
+                contentVersion: widget.contentVersion,
+              ),
+        );
     }
   }
 }
 
 class _ParagraphView extends StatelessWidget {
-  const _ParagraphView({required this.paragraph, required this.scale});
+  const _ParagraphView({
+    required this.paragraph,
+    required this.scale,
+    required this.onToggleBookmark,
+  });
 
   final Paragraph paragraph;
   final double scale;
+  final VoidCallback onToggleBookmark;
 
   @override
   Widget build(BuildContext context) {
@@ -220,7 +306,28 @@ class _ParagraphView extends StatelessWidget {
       // Stable anchor: the paragraph id is part of the key.
       key: Key('para-${paragraph.id}'),
       padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Text(paragraph.text, style: style),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              paragraph.text,
+              key: Key('para-text-${paragraph.id}'),
+              style: style,
+            ),
+          ),
+          BlocSelector<BookmarksCubit, BookmarksState, bool>(
+            selector: (s) => s.isBookmarked(paragraph.id),
+            builder: (context, marked) => IconButton(
+              key: Key('bookmark-${paragraph.id}'),
+              tooltip:
+                  marked ? AppStrings.removeBookmark : AppStrings.addBookmark,
+              icon: Icon(marked ? Icons.bookmark : Icons.bookmark_border),
+              onPressed: onToggleBookmark,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

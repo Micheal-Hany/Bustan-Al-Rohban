@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/router/app_router.dart';
 import '../../../app/strings.dart';
 import '../../../core/widgets/status_views.dart';
+import '../../reader/progress/resume_card.dart';
 import '../data/library_repository.dart';
 import 'library_cubit.dart';
 import 'load_status.dart';
@@ -48,6 +49,7 @@ class _LibraryHomeView extends StatelessWidget {
               return ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
+                  const ResumeCard(),
                   Card(
                     child: ListTile(
                       key: const Key('book-tile'),

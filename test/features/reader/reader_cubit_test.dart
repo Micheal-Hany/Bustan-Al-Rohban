@@ -3,6 +3,7 @@ import 'package:bustan_al_rohban/features/library/presentation/load_status.dart'
 import 'package:bustan_al_rohban/features/reader/domain/editorial.dart';
 import 'package:bustan_al_rohban/features/reader/domain/reader_items.dart';
 import 'package:bustan_al_rohban/features/reader/presentation/reader_cubit.dart';
+import 'package:bustan_al_rohban/features/reader/progress/reading_progress.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../core/content/test_support.dart';
@@ -14,6 +15,7 @@ ReaderCubit _cubit(
   String sectionId = 'sec-a-001',
   String? paragraphId,
   EditorialSource? editorial,
+  Future<ReadingProgress?> Function(String)? progressLookup,
 }) =>
     ReaderCubit(
       repoFor(source),
@@ -21,6 +23,7 @@ ReaderCubit _cubit(
       sectionId: sectionId,
       paragraphId: paragraphId,
       editorial: editorial,
+      progressLookup: progressLookup,
     );
 
 void main() {
@@ -116,6 +119,65 @@ void main() {
       mem.files['saints/saint-a.json'] = good;
       await c.load();
       expect(c.state.status, LoadStatus.loaded);
+      await c.close();
+    });
+  });
+
+  group('ReaderCubit resume', () {
+    ReadingProgress saved(String paragraphId) => ReadingProgress(
+          saintId: 'saint-a',
+          sectionId: 'sec-a-001',
+          paragraphId: paragraphId,
+          offset: 0,
+          contentVersion: 1,
+          updatedAt: DateTime.utc(2026, 1, 1),
+        );
+
+    test('opens at the saved paragraph when no anchor is given', () async {
+      final c = _cubit(
+        probeFor(twoSaintBook()),
+        progressLookup: (id) async => id == 'sec-a-001' ? saved('p-000002') : null,
+      );
+      await c.load();
+      expect(c.state.items[c.state.initialIndex].paragraphId, 'p-000002');
+      await c.close();
+    });
+
+    test('an explicit anchor wins over saved progress', () async {
+      final c = _cubit(
+        probeFor(twoSaintBook()),
+        paragraphId: 'p-000001',
+        progressLookup: (_) async => saved('p-000002'),
+      );
+      await c.load();
+      expect(c.state.items[c.state.initialIndex].paragraphId, 'p-000001');
+      await c.close();
+    });
+
+    test('saved progress pointing outside the section is ignored', () async {
+      final c = _cubit(
+        probeFor(twoSaintBook()),
+        progressLookup: (_) async => saved('p-000004'),
+      );
+      await c.load();
+      expect(c.state.initialIndex, 0);
+      await c.close();
+    });
+
+    test('no saved progress opens at the top', () async {
+      final c = _cubit(
+        probeFor(twoSaintBook()),
+        progressLookup: (_) async => null,
+      );
+      await c.load();
+      expect(c.state.initialIndex, 0);
+      await c.close();
+    });
+
+    test('exposes the content version of the installed book', () async {
+      final c = _cubit(probeFor(twoSaintBook()));
+      await c.load();
+      expect(c.state.contentVersion, 1);
       await c.close();
     });
   });

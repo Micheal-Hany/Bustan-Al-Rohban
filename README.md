@@ -106,3 +106,23 @@ flutter run   # Search -> type an Arabic word, with and without diacritics
 ```
 
 The search index is pure Dart (in memory, built from the installed JSON on first search). A SQLite FTS adapter is deferred to Task 5 and only if the real book needs it.
+
+## Task 5 (bookmarks and reading progress) - run on your machine
+
+Drift needs generated code, which I cannot produce here. After `git pull`:
+
+```bash
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs   # creates lib/core/db/app_database.g.dart
+git add lib/core/db/app_database.g.dart && git commit -m "Task 5: generated Drift code" && git push
+flutter analyze
+flutter test test/features/bookmarks/
+flutter test test/features/reader/progress/
+flutter test test/core/db/
+flutter test
+flutter run   # bookmark a paragraph, restart the app, open Bookmarks, continue reading
+```
+
+`test/core/db/` opens a real SQLite database. If the sqlite3 native library is missing (for example Windows without `sqlite3.dll`), those tests are **skipped with a message**, not failed. To run them, put `sqlite3.dll` (from sqlite.org, 64-bit) next to the Flutter SDK's `dart.exe` or on your PATH. Everything else uses in-memory stores that run the same contract tests as the Drift stores.
+
+If `build_runner` or `pub get` reports a version conflict, paste the message and I will adjust the versions.

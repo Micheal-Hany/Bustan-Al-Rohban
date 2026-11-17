@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/content/test_support.dart';
+import '../bookmarks/user_data_test_support.dart';
 import '../library/library_test_support.dart';
 
 const _diacritics = 'السَّلَامُ  عَلَيْكُمْ\nوَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ ';
@@ -75,7 +76,7 @@ Future<void> _pumpReader(
     ContentLoader(probeFor(book)),
   );
   await tester.pumpWidget(
-    RepositoryProvider<LibraryRepository>.value(
+    withUserData(RepositoryProvider<LibraryRepository>.value(
       value: repo,
       child: MaterialApp(
         theme: AppTheme.light(),
@@ -93,18 +94,14 @@ Future<void> _pumpReader(
           editorial: editorial,
         ),
       ),
-    ),
+    )),
   );
   await tester.pumpAndSettle();
 }
 
 double _fontSize(WidgetTester tester, String paragraphId) {
-  final text = tester.widget<Text>(
-    find.descendant(
-      of: find.byKey(Key('para-$paragraphId')),
-      matching: find.byType(Text),
-    ),
-  );
+  final text =
+      tester.widget<Text>(find.byKey(Key('para-text-$paragraphId')));
   return text.style!.fontSize!;
 }
 
@@ -133,10 +130,8 @@ void main() {
     testWidgets('headings are bold and larger than body text',
         (tester) async {
       await _pumpReader(tester, _readerBook());
-      final heading = tester.widget<Text>(find.descendant(
-        of: find.byKey(const Key('para-p-000002')),
-        matching: find.byType(Text),
-      ));
+      final heading =
+          tester.widget<Text>(find.byKey(const Key('para-text-p-000002')));
       expect(heading.style!.fontWeight, FontWeight.bold);
       expect(_fontSize(tester, 'p-000002'),
           greaterThan(_fontSize(tester, 'p-000001')));
@@ -154,12 +149,12 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       final repo = LibraryRepository(ContentLoader(probeFor(_readerBook())));
-      await tester.pumpWidget(RepositoryProvider<LibraryRepository>.value(
+      await tester.pumpWidget(withUserData(RepositoryProvider<LibraryRepository>.value(
         value: repo,
         child: const MaterialApp(
           home: ReaderScreen(saintId: 'saint-a', sectionId: 'sec-zzz'),
         ),
-      ));
+      )));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('empty-view')), findsOneWidget);
       expect(find.text(AppStrings.notFound), findsOneWidget);

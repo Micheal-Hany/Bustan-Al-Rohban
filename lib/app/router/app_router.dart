@@ -4,6 +4,7 @@ import '../../core/content/asset_content_source.dart';
 import '../../core/content/preview/content_preview_screen.dart';
 import '../../core/screens/home_screen.dart';
 import '../../core/screens/placeholder_screen.dart';
+import '../../features/bookmarks/presentation/bookmarks_screen.dart';
 import '../../features/library/presentation/book_overview_screen.dart';
 import '../../spikes/tts/tts_spike_screen.dart';
 import '../../features/library/presentation/library_home_screen.dart';
@@ -95,10 +96,7 @@ GoRouter createRouter() {
       ),
       GoRoute(
         path: AppRoutes.bookmarks,
-        builder: (context, state) => const PlaceholderScreen(
-          screenKey: 'bookmarks-screen',
-          title: AppStrings.bookmarks,
-        ),
+        builder: (context, state) => const BookmarksScreen(),
       ),
       GoRoute(
         path: AppRoutes.chat,

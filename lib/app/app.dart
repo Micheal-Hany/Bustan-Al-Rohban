@@ -5,7 +5,11 @@ import 'package:go_router/go_router.dart';
 
 import '../core/content/asset_content_source.dart';
 import '../core/content/content_loader.dart';
+import '../features/bookmarks/domain/bookmark_store.dart';
+import '../features/bookmarks/presentation/bookmarks_cubit.dart';
 import '../features/library/data/library_repository.dart';
+import '../features/reader/progress/progress_cubit.dart';
+import '../features/reader/progress/reading_progress.dart';
 import '../features/search/data/search_repository.dart';
 import 'router/app_router.dart';
 import 'strings.dart';
@@ -15,9 +19,19 @@ import 'theme/app_theme.dart';
 class BustanApp extends StatefulWidget {
   /// [libraryRepository] is injectable for tests; by default the installed
   /// book is read from the asset bundle.
-  const BustanApp({super.key, this.libraryRepository});
+  ///
+  /// [bookmarkStore] and [progressStore] default to memory-only stores; the
+  /// real app (`main.dart`) passes the Drift-backed ones.
+  const BustanApp({
+    super.key,
+    this.libraryRepository,
+    this.bookmarkStore,
+    this.progressStore,
+  });
 
   final LibraryRepository? libraryRepository;
+  final BookmarkStore? bookmarkStore;
+  final ProgressStore? progressStore;
 
   @override
   State<BustanApp> createState() => _BustanAppState();
@@ -30,10 +44,16 @@ class _BustanAppState extends State<BustanApp> {
         ContentLoader(const AssetContentSource('assets/content')),
       );
   late final SearchRepository _search = SearchRepository(_library);
+  late final BookmarksCubit _bookmarks =
+      BookmarksCubit(widget.bookmarkStore ?? InMemoryBookmarkStore())..load();
+  late final ProgressCubit _progress =
+      ProgressCubit(widget.progressStore ?? InMemoryProgressStore())..load();
 
   @override
   void dispose() {
     _router.dispose();
+    _bookmarks.close();
+    _progress.close();
     super.dispose();
   }
 
@@ -44,18 +64,24 @@ class _BustanAppState extends State<BustanApp> {
         RepositoryProvider<LibraryRepository>.value(value: _library),
         RepositoryProvider<SearchRepository>.value(value: _search),
       ],
-      child: MaterialApp.router(
-        title: AppStrings.appTitle,
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light(),
-        locale: const Locale('ar'),
-        supportedLocales: const [Locale('ar')],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<BookmarksCubit>.value(value: _bookmarks),
+          BlocProvider<ProgressCubit>.value(value: _progress),
         ],
-        routerConfig: _router,
+        child: MaterialApp.router(
+          title: AppStrings.appTitle,
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light(),
+          locale: const Locale('ar'),
+          supportedLocales: const [Locale('ar')],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          routerConfig: _router,
+        ),
       ),
     );
   }

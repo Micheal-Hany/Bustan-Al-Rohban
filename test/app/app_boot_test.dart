@@ -49,7 +49,6 @@ void main() {
 
     testWidgets('can open each placeholder screen and go back (library is a real screen since Task 2)', (tester) async {
       final cases = {
-        'nav-bookmarks': 'bookmarks-screen',
         'nav-chat': 'chat-screen',
         'nav-settings': 'settings-screen',
       };

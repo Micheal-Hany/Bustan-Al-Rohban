@@ -8,6 +8,7 @@ import '../../library/data/library_repository.dart';
 import '../../library/presentation/load_status.dart';
 import '../domain/editorial.dart';
 import '../domain/reader_items.dart';
+import '../progress/reading_progress.dart';
 
 class ReaderState {
   const ReaderState({
@@ -16,6 +17,7 @@ class ReaderState {
     this.section,
     this.items = const [],
     this.initialIndex = 0,
+    this.contentVersion = 1,
     this.message,
     this.error,
   });
@@ -27,6 +29,9 @@ class ReaderState {
 
   /// List index to start at (the anchor paragraph, or 0).
   final int initialIndex;
+
+  /// Content version of the installed book (saved with bookmarks/progress).
+  final int contentVersion;
 
   /// Text for the empty state.
   final String? message;
@@ -42,6 +47,7 @@ class ReaderCubit extends Cubit<ReaderState> {
     required this.sectionId,
     this.paragraphId,
     EditorialSource? editorial,
+    this.progressLookup,
   })  : _editorial = editorial,
         super(const ReaderState(status: LoadStatus.loading));
 
@@ -50,6 +56,9 @@ class ReaderCubit extends Cubit<ReaderState> {
   final String sectionId;
   final String? paragraphId;
   final EditorialSource? _editorial;
+
+  /// Saved progress for a section (used to resume when no anchor is given).
+  final Future<ReadingProgress?> Function(String sectionId)? progressLookup;
 
   Future<void> load() async {
     emit(const ReaderState(status: LoadStatus.loading));
@@ -87,13 +96,20 @@ class ReaderCubit extends Cubit<ReaderState> {
         section: section,
         editorial: source.forSection(saint.id, section.id),
       );
-      final anchor = paragraphId == null ? -1 : indexOfParagraph(items, paragraphId!);
+      var anchor = paragraphId == null ? -1 : indexOfParagraph(items, paragraphId!);
+      if (paragraphId == null && progressLookup != null) {
+        // No explicit anchor: resume where the reader left off.
+        final saved = await progressLookup!(section.id);
+        if (saved != null) anchor = indexOfParagraph(items, saved.paragraphId);
+      }
+      if (isClosed) return;
       emit(ReaderState(
         status: LoadStatus.loaded,
         saint: saint,
         section: section,
         items: items,
         initialIndex: math.max(0, anchor),
+        contentVersion: manifest.contentVersion,
       ));
     } catch (e) {
       if (isClosed) return;

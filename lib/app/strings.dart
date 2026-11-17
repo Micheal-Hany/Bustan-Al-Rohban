@@ -35,6 +35,16 @@ class AppStrings {
   static const yearLabel = 'السنة';
   static const attributionLabel = 'الإسناد';
   static const aliasesLabel = 'أسماء أخرى';
+  // Bookmarks and progress (Task 5)
+  static const addBookmark = 'إضافة إشارة مرجعية';
+  static const removeBookmark = 'إزالة الإشارة المرجعية';
+  static const bookmarkLoadFailed = 'تعذر تحميل الإشارات المرجعية';
+  static const bookmarkSaveFailed = 'تعذر حفظ الإشارة المرجعية';
+  static const bookmarksEmpty = 'لا توجد إشارات مرجعية بعد';
+  static const bookmarkUnavailable = 'هذا المحتوى لم يعد متاحا بعد التحديث';
+  static const deleteBookmark = 'حذف';
+  static const continueReading = 'متابعة القراءة';
+
   // Search (Task 4)
   static const searchHint = 'ابحث في الكتاب';
   static const searchClear = 'مسح';
