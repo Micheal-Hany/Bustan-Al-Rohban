@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import '../core/content/asset_content_source.dart';
 import '../core/content/content_loader.dart';
+import '../features/audio/domain/speech_cubit.dart';
+import '../features/audio/domain/tts_engine.dart';
 import '../features/bookmarks/domain/bookmark_store.dart';
 import '../features/bookmarks/presentation/bookmarks_cubit.dart';
 import '../features/library/data/library_repository.dart';
@@ -27,12 +29,16 @@ class BustanApp extends StatefulWidget {
   const BustanApp({
     super.key,
     this.libraryRepository,
+    this.ttsEngineFactory,
     this.bookmarkStore,
     this.progressStore,
     this.prefsStore,
   });
 
   final LibraryRepository? libraryRepository;
+
+  /// Creates the text-to-speech engine on first use (tests pass a fake).
+  final TtsEngine Function()? ttsEngineFactory;
   final BookmarkStore? bookmarkStore;
   final ProgressStore? progressStore;
   final PrefsStore? prefsStore;
@@ -52,6 +58,8 @@ class _BustanAppState extends State<BustanApp> {
       BookmarksCubit(widget.bookmarkStore ?? InMemoryBookmarkStore())..load();
   late final ProgressCubit _progress =
       ProgressCubit(widget.progressStore ?? InMemoryProgressStore())..load();
+  late final SpeechCubit _speech =
+      SpeechCubit(widget.ttsEngineFactory ?? FlutterTtsEngine.new);
   late final ReadingPrefsCubit _prefs =
       ReadingPrefsCubit(widget.prefsStore ?? InMemoryPrefsStore())..load();
 
@@ -61,6 +69,7 @@ class _BustanAppState extends State<BustanApp> {
     _bookmarks.close();
     _progress.close();
     _prefs.close();
+    _speech.close();
     super.dispose();
   }
 
@@ -76,6 +85,7 @@ class _BustanAppState extends State<BustanApp> {
           BlocProvider<BookmarksCubit>.value(value: _bookmarks),
           BlocProvider<ProgressCubit>.value(value: _progress),
           BlocProvider<ReadingPrefsCubit>.value(value: _prefs),
+          BlocProvider<SpeechCubit>.value(value: _speech),
         ],
         child: MaterialApp.router(
           title: AppStrings.appTitle,

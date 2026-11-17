@@ -21,6 +21,9 @@ import '../../settings/domain/reading_prefs.dart';
 import '../../settings/presentation/reading_prefs_cubit.dart';
 import '../../../app/theme/app_icons.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../audio/domain/speech_cubit.dart';
+import '../../audio/domain/speech_plan.dart';
+import '../../audio/presentation/speech_bar.dart';
 
 /// Reads one section. Original text is rendered exactly as stored.
 class ReaderScreen extends StatelessWidget {
@@ -98,6 +101,8 @@ class _ReaderView extends StatelessWidget {
                 : null,
           ),
           body: _body(context, state),
+          bottomNavigationBar:
+              state.status == LoadStatus.loaded ? const SpeechBar() : null,
         );
       },
     );
@@ -183,8 +188,10 @@ class _ReaderList extends StatefulWidget {
 
 class _ReaderListState extends State<_ReaderList> {
   final _positions = ItemPositionsListener.create();
+  final _scroll = ItemScrollController();
   late final ProgressCubit _progress;
   late final ProgressTracker _tracker;
+  late final SpeechCubit _speech;
 
   @override
   void initState() {
@@ -200,6 +207,11 @@ class _ReaderListState extends State<_ReaderList> {
         contentVersion: widget.contentVersion,
       ),
     );
+    _speech = context.read<SpeechCubit>();
+    _speech.load(buildSpeechPlan([
+      for (final item in widget.items)
+        if (item is ParagraphItem) item.paragraph,
+    ]));
     _positions.itemPositions.addListener(_onPositions);
   }
 
@@ -210,13 +222,39 @@ class _ReaderListState extends State<_ReaderList> {
         first = p.index;
       }
     }
-    if (first != null) _tracker.visibleChanged(first);
+    if (first != null) {
+      _tracker.visibleChanged(first);
+      // Reading aloud starts at the paragraph the reader is looking at.
+      for (var i = first; i < widget.items.length; i++) {
+        final item = widget.items[i];
+        if (item is ParagraphItem) {
+          _speech.seekTo(item.paragraph.id);
+          break;
+        }
+      }
+    }
+  }
+
+  /// Keeps the paragraph being spoken in view.
+  void _followSpeech(String paragraphId) {
+    final index = indexOfParagraph(widget.items, paragraphId);
+    if (index < 0 || !_scroll.isAttached) return;
+    final visible = _positions.itemPositions.value.any((p) =>
+        p.index == index && p.itemLeadingEdge >= 0 && p.itemTrailingEdge <= 1);
+    if (!visible) {
+      _scroll.scrollTo(
+        index: index,
+        alignment: 0.1,
+        duration: const Duration(milliseconds: 300),
+      );
+    }
   }
 
   @override
   void dispose() {
     _positions.itemPositions.removeListener(_onPositions);
     _tracker.dispose(); // saves the last position
+    _speech.stop(); // reading aloud never continues after leaving the text
     super.dispose();
   }
 
@@ -227,14 +265,21 @@ class _ReaderListState extends State<_ReaderList> {
       buildWhen: (a, b) => a.prefs != b.prefs,
       builder: (context, state) {
         final prefs = state.prefs;
-        return ScrollablePositionedList.builder(
+        return BlocListener<SpeechCubit, SpeechState>(
+          listenWhen: (a, b) =>
+              b.status == SpeechStatus.playing &&
+              b.paragraphId != null &&
+              a.paragraphId != b.paragraphId,
+          listener: (context, state) => _followSpeech(state.paragraphId!),
+          child: ScrollablePositionedList.builder(
+          itemScrollController: _scroll,
           key: const Key('reader-list'),
           itemCount: items.length,
           initialScrollIndex: widget.initialIndex,
           itemPositionsListener: _positions,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           itemBuilder: (context, i) => _buildItem(context, items[i], i, prefs),
-        );
+        ));
       },
     );
   }
@@ -329,7 +374,15 @@ class _ParagraphView extends StatelessWidget {
       // Stable anchor: the paragraph id is part of the key.
       key: Key('para-${paragraph.id}'),
       padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
+      child: BlocSelector<SpeechCubit, SpeechState, bool>(
+        selector: (s) => s.paragraphId == paragraph.id,
+        builder: (context, speaking) => DecoratedBox(
+          key: speaking ? Key('para-speaking-${paragraph.id}') : null,
+          decoration: BoxDecoration(
+            color: speaking ? AppTheme.goldSoft : null,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
@@ -350,6 +403,8 @@ class _ParagraphView extends StatelessWidget {
             ),
           ),
         ],
+          ),
+        ),
       ),
     );
   }

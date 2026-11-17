@@ -1,3 +1,5 @@
+import 'package:bustan_al_rohban/features/audio/domain/speech_cubit.dart';
+import 'package:bustan_al_rohban/features/audio/domain/tts_engine.dart';
 import 'package:bustan_al_rohban/features/bookmarks/domain/bookmark.dart';
 import 'package:bustan_al_rohban/features/bookmarks/domain/bookmark_store.dart';
 import 'package:bustan_al_rohban/features/bookmarks/presentation/bookmarks_cubit.dart';
@@ -15,6 +17,7 @@ Widget withUserData(
   BookmarkStore? bookmarks,
   ProgressStore? progress,
   PrefsStore? prefs,
+  TtsEngine Function()? tts,
 }) {
   return MultiBlocProvider(
     providers: [
@@ -27,6 +30,9 @@ Widget withUserData(
             ProgressCubit(progress ?? InMemoryProgressStore())..load(),
       ),
       BlocProvider(
+        create: (_) => SpeechCubit(tts ?? _unusedEngine),
+      ),
+      BlocProvider(
         create: (_) =>
             ReadingPrefsCubit(prefs ?? InMemoryPrefsStore())..load(),
       ),
@@ -34,6 +40,9 @@ Widget withUserData(
     child: child,
   );
 }
+
+TtsEngine _unusedEngine() =>
+    throw StateError('Text-to-speech engine used in a test that did not set one');
 
 /// A store whose writes (and optionally reads) can be made to fail.
 class FailingBookmarkStore implements BookmarkStore {

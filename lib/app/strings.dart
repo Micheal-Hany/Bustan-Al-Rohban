@@ -100,4 +100,18 @@ class AppStrings {
   static const insightsNone = 'لا توجد رؤى لهذا القسم';
   static const backToText = 'العودة إلى النص الأصلي';
   static const paragraphWord = 'فقرة';
+
+  // Text-to-speech (Task 8)
+  static const ttsPlay = 'تشغيل القراءة';
+  static const ttsPause = 'إيقاف مؤقت';
+  static const ttsStop = 'إيقاف القراءة';
+  static const ttsSpeed = 'سرعة القراءة';
+  static const ttsOfflineVoice = 'صوت عربي يعمل دون إنترنت';
+  static const ttsMissingVoice =
+      'لا يوجد صوت عربي على هذا الجهاز. ثبّت صوتًا عربيًا من إعدادات الجهاز: '
+      'الإعدادات › النظام › اللغات › تحويل النص إلى كلام.';
+  static const ttsOnlineOnly =
+      'الأصوات العربية المتاحة تحتاج إلى الإنترنت، ولن يتم استخدام خدمة عبر '
+      'الإنترنت تلقائيًا. ثبّت صوتًا عربيًا يعمل دون إنترنت.';
+  static const ttsError = 'تعذر تشغيل القراءة. حاول مرة أخرى.';
 }
