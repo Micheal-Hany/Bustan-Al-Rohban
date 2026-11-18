@@ -5,6 +5,7 @@ import { Logger } from '@nestjs/common';
 import request from 'supertest';
 import { CorpusError } from '../src/sources/corpus.loader';
 import { createApp } from '../src/create-app';
+import { FakeLlmProvider } from '../src/providers/fake-llm';
 import { MAX_MESSAGE_CHARS, MAX_MESSAGES } from '../src/retrieval/retrieval.dto';
 import { testConfig } from './helpers';
 
@@ -205,7 +206,7 @@ describe('privacy and statelessness', () => {
 
 describe('production safety', () => {
   it('refuses to start in production with the FAKE corpus', async () => {
-    await expect(createApp(testConfig({ nodeEnv: 'production' }), false)).rejects.toThrow(CorpusError);
+    await expect(createApp(testConfig({ nodeEnv: 'production' }), false, new FakeLlmProvider())).rejects.toThrow(CorpusError);
   });
 
   it('the debug endpoint is 404 when disabled', async () => {

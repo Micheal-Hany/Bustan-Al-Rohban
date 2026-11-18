@@ -2,13 +2,14 @@
   "name": "bustan-backend",
   "version": "0.1.0",
   "private": true,
-  "description": "Stateless book-only RAG backend for the Bustan Al-Rohban app (Task 10a: skeleton, retrieval, refusal).",
+  "description": "Stateless book-only RAG backend for the Bustan Al-Rohban app (Task 10b: chat pipeline, validation, safety policy, evaluation set).",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/main.js",
     "start:dev": "ts-node src/main.ts",
     "test": "jest",
-    "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\""
+    "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\" \"eval/**/*.ts\"",
+    "eval": "ts-node eval/run.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.2.10",
