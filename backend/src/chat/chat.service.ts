@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AppError } from '../common/app-error';
-import { LLM_PROVIDER, LlmProvider, LlmUsage } from '../providers/llm.port';
+import { LLM_PROVIDER, LlmProvider, LlmUsage, ProviderError } from '../providers/llm.port';
+import { Cost, PricingTable, estimateCost } from '../providers/pricing';
 import { REFUSAL_MESSAGE, RetrievalService } from '../retrieval/retrieval.service';
 import { RetrievalRequest, RetrievedPassage } from '../retrieval/retrieval.types';
 import {
@@ -14,6 +15,8 @@ import {
 import { SYSTEM_PROMPT, buildPrompt } from '../theological-policy/system-prompt';
 import { AnswerBlock } from './answer.schema';
 import { ValidationCode, validateModelOutput } from './validation';
+
+export const PRICING = 'PRICING';
 
 export interface Reference {
   paragraphId: string;
@@ -36,7 +39,7 @@ export type ChatResponse =
       status: 'answered';
       blocks: (AnswerBlock & { references: Reference[] })[];
       pastoralNote?: string;
-      meta: { provider: string; model: string; usage?: LlmUsage; attempts: number };
+      meta: { provider: string; model: string; usage?: LlmUsage; cost: Cost; attempts: number };
     }
   | {
       status: 'refused';
@@ -56,6 +59,8 @@ export interface ChatResult {
   outcome: ChatOutcome;
   attempts: number;
   validationCodes?: ValidationCode[];
+  /** Actual provider/model/usage/cost of the model calls made (all attempts). */
+  model?: { provider: string; model: string; usage?: LlmUsage; cost: Cost };
 }
 
 /** Fixed text when the model's output could not be validated (SPEC 7.6). */
@@ -74,6 +79,7 @@ export class ChatService {
   constructor(
     @Inject(RetrievalService) private readonly retrieval: RetrievalService,
     @Inject(LLM_PROVIDER) private readonly llm: LlmProvider,
+    @Inject(PRICING) private readonly pricing: PricingTable,
   ) {}
 
   async answer(req: RetrievalRequest): Promise<ChatResult> {
@@ -107,6 +113,15 @@ export class ChatService {
     const passages = found.passages;
     let feedback: string[] | undefined;
     let lastCodes: ValidationCode[] = [];
+    let used: LlmUsage | undefined = { inputTokens: 0, outputTokens: 0 };
+    let provider = '';
+    let model = '';
+    const modelInfo = (): NonNullable<ChatResult['model']> => ({
+      provider,
+      model,
+      usage: used,
+      cost: estimateCost(this.pricing, provider, model, used),
+    });
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       let raw;
       try {
@@ -117,27 +132,39 @@ export class ChatService {
           passages,
           retryFeedback: feedback,
         });
-      } catch {
+      } catch (e) {
         // Provider details are never forwarded to the client.
+        const kind = e instanceof ProviderError ? e.kind : 'server';
+        if (kind === 'timeout') throw new AppError(504, 'provider_timeout', 'The answer service timed out.');
+        if (kind === 'rate_limited') throw new AppError(503, 'provider_busy', 'The answer service is busy.');
         throw new AppError(502, 'provider_error', 'The answer service is unavailable.');
       }
+      provider = raw.provider;
+      model = raw.model;
+      // Usage is summed over attempts; one missing report makes the total unknown.
+      used =
+        used && raw.usage?.inputTokens !== undefined && raw.usage.outputTokens !== undefined
+          ? { inputTokens: (used.inputTokens ?? 0) + raw.usage.inputTokens, outputTokens: (used.outputTokens ?? 0) + raw.usage.outputTokens }
+          : undefined;
       const v = validateModelOutput(raw.text, passages);
       if (v.ok) {
         if (v.status === 'not_in_book') {
           return {
             outcome: 'refused_model',
             attempts: attempt,
+            model: modelInfo(),
             response: { status: 'refused', reason: 'not_in_book', message: REFUSAL_MESSAGE },
           };
         }
         return {
           outcome: 'answered',
           attempts: attempt,
+          model: modelInfo(),
           response: {
             status: 'answered',
             blocks: v.blocks.map((b) => ({ ...b, references: this.refs(b.citations, passages) })),
             pastoralNote: isSensitiveTopic(question) ? PASTORAL_NOTE : undefined,
-            meta: { provider: raw.provider, model: raw.model, usage: raw.usage, attempts: attempt },
+            meta: { ...modelInfo(), attempts: attempt },
           },
         };
       }
@@ -148,6 +175,7 @@ export class ChatService {
       outcome: 'refused_validation',
       attempts: MAX_ATTEMPTS,
       validationCodes: lastCodes,
+      model: modelInfo(),
       response: { status: 'refused', reason: 'validation_failed', message: UNVALIDATED_MESSAGE },
     };
   }

@@ -11,6 +11,8 @@ export const testConfig = (over: Partial<AppConfig> = {}): AppConfig => ({
   nodeEnv: 'test',
   retrieveEndpoint: true,
   port: 0,
+  pricingFile: join(__dirname, 'fixtures', 'pricing.json'),
+  llm: { provider: 'fake', timeoutMs: 1000, maxOutputTokens: 500 },
   ...over,
 });
 

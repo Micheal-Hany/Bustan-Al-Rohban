@@ -62,9 +62,12 @@ const corpusSvc = new CorpusService({
   nodeEnv: 'test',
   retrieveEndpoint: false,
   port: 0,
+  pricingFile: '',
+  llm: { provider: 'fake', timeoutMs: 1000, maxOutputTokens: 500 },
 });
 const byId = new Map(corpusSvc.corpus.passages.map((p) => [p.paragraphId, p]));
 const retrieval = new RetrievalService(corpusSvc);
+const pricing = { version: 'eval', currency: 'USD' as const, models: {} };
 
 interface Outcome {
   c: Case;
@@ -79,7 +82,7 @@ interface Outcome {
 
 async function run(c: Case): Promise<Outcome> {
   const llm = new FakeLlmProvider(c.fake);
-  const chat = new ChatService(retrieval, llm);
+  const chat = new ChatService(retrieval, llm, pricing);
   const req: RetrievalRequest = { mode: c.mode, scope: c.scope, messages: c.messages };
   const problems: string[] = [];
   let res: ChatResult;

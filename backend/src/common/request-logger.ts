@@ -15,6 +15,14 @@ export interface LogEntry {
   hits?: number;
   ms?: number;
   errorCode?: string;
+  /** Model call facts (no text): which model, tokens, estimated cost. */
+  provider?: string;
+  model?: string;
+  inputTokens?: number;
+  outputTokens?: number;
+  costUsd?: number | null;
+  costStatus?: string;
+  pricingVersion?: string;
 }
 
 @Injectable()

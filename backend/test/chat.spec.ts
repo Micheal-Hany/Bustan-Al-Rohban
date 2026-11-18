@@ -5,6 +5,7 @@ import { ChatService, UNVALIDATED_MESSAGE } from '../src/chat/chat.service';
 import { isVerbatim, validateModelOutput } from '../src/chat/validation';
 import { createApp } from '../src/create-app';
 import { FakeBehavior, FakeLlmProvider } from '../src/providers/fake-llm';
+import { loadPricing } from '../src/providers/pricing';
 import { LlmProvider } from '../src/providers/llm.port';
 import { REFUSAL_MESSAGE, RetrievalService } from '../src/retrieval/retrieval.service';
 import { RetrievedPassage } from '../src/retrieval/retrieval.types';
@@ -115,7 +116,7 @@ describe('ChatService', () => {
   });
   const svc = (b: FakeBehavior) => {
     const llm = new FakeLlmProvider(b);
-    return { llm, chat: new ChatService(retrieval, llm) };
+    return { llm, chat: new ChatService(retrieval, llm, loadPricing(testConfig().pricingFile)) };
   };
   const Q = 'ماذا يقول الكتاب عن الصوم والانقطاع عن الطعام؟';
 

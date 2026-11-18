@@ -51,3 +51,22 @@ with the scripted fake model, so it proves **pipeline enforcement**, not model
 quality; `scriptedOnly` cases (false premise, doctrine) need real-model judgement
 and are re-run against OpenAI/Gemini in 10c. Release-blocking thresholds are
 SPEC §6.6; non-critical thresholds (0.9 proposed) await owner approval.
+
+## Providers, usage and cost (Task 10c)
+
+- Adapters: `providers/openai.provider.ts` (Chat Completions, JSON mode) and
+  `providers/gemini.provider.ts` (generateContent, JSON mime type), plain `fetch`,
+  no SDK. Both pass the same contract tests with mocked HTTP.
+- Chosen by `LLM_PROVIDER` / `LLM_MODEL` (env). Missing model or key fails at startup.
+- The key is sent only in a request header (never URL, body, response or log).
+- Errors: timeout -> 504 `provider_timeout`; rate limit -> 503 `provider_busy`;
+  anything else -> 502 `provider_error`. Provider bodies are never forwarded.
+- Usage is summed over attempts (a retry costs money). If any call omits usage the
+  total is unknown and cost is `unavailable` (`usage_missing`).
+- Cost = tokens x `config/pricing.json` (versioned, USD per 1M tokens). An unpriced
+  model gives `unavailable` (`no_pricing`), never a guess. The shipped file is
+  EMPTY: **owner must fill real prices and bump `version`.** Cost is always an estimate.
+- Each request logs provider, model, tokens, cost, status, pricing version (no text);
+  the response `meta` carries the same, so the actual model used is always recorded.
+- Real-model evaluation (scriptedOnly cases) is run by the owner with real keys once
+  prices/models are chosen; the harness still uses the fake model by default.

@@ -30,6 +30,13 @@ export class ChatController {
         result.validationCodes?.join(',') ??
         (result.response.status === 'refused' ? result.response.reason : undefined),
       hits: result.attempts,
+      provider: result.model?.provider,
+      model: result.model?.model,
+      inputTokens: result.model?.usage?.inputTokens,
+      outputTokens: result.model?.usage?.outputTokens,
+      costUsd: result.model?.cost.amountUsd,
+      costStatus: result.model?.cost.status,
+      pricingVersion: result.model?.cost.pricingVersion,
       ms: Date.now() - started,
     });
     return { requestId, ...result.response };

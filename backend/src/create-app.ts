@@ -11,9 +11,9 @@ export async function createApp(
   logger: LogLevel[] | false = ['log', 'warn', 'error'],
   llm?: LlmProvider,
 ): Promise<INestApplication> {
-  // The fake model is for development and tests only (real adapters: Task 10c).
-  if (config.nodeEnv === 'production' && !llm) {
-    throw new Error('No LLM provider configured for production.');
+  // The fake model is for development and tests only.
+  if (config.nodeEnv === 'production' && !llm && config.llm.provider === 'fake') {
+    throw new Error('Production needs LLM_PROVIDER=openai or gemini.');
   }
   const app = await NestFactory.create(AppModule.register(config, llm), { logger, abortOnError: false });
   app.useGlobalFilters(new AllExceptionsFilter());

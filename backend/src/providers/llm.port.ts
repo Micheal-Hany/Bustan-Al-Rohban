@@ -30,3 +30,22 @@ export interface LlmProvider {
 }
 
 export const LLM_PROVIDER = 'LLM_PROVIDER';
+
+export type ProviderErrorKind =
+  | 'timeout'
+  | 'rate_limited'
+  | 'auth'
+  | 'bad_request'
+  | 'server'
+  | 'network'
+  | 'bad_response';
+
+/**
+ * Failure of a provider call. The message is fixed text built from the kind:
+ * it never contains the provider's response body, the prompt or the key.
+ */
+export class ProviderError extends Error {
+  constructor(readonly kind: ProviderErrorKind) {
+    super(`provider_${kind}`);
+  }
+}

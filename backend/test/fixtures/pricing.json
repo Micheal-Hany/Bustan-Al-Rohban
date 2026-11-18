@@ -1,0 +1,9 @@
+{
+  "version": "test-1",
+  "currency": "USD",
+  "models": {
+    "openai:test-model": { "inputPerMTok": 2, "outputPerMTok": 8 },
+    "gemini:test-model": { "inputPerMTok": 1, "outputPerMTok": 4 },
+    "fake:fake-1": { "inputPerMTok": 0, "outputPerMTok": 0 }
+  }
+}

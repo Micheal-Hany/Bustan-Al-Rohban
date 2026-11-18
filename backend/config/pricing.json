@@ -1,0 +1,6 @@
+{
+  "version": "unpriced-0",
+  "currency": "USD",
+  "note": "OWNER ACTION: fill per-model prices from the providers' pricing pages and bump `version` (e.g. 2026-12-01). Keys are `provider:model`, prices are USD per 1,000,000 tokens. Until a model has an entry, cost is reported as unavailable (never guessed).",
+  "models": {}
+}
