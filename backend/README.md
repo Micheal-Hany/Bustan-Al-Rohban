@@ -41,3 +41,8 @@ Log lines are printed in the terminal running the server: they contain ids and o
 
 Request: `{ mode: 'saint_scope'|'book_scope', scope: { bookId?, saintId?, sectionId? }, messages: [{ role: 'user'|'assistant', text }] (1-20, last is user, <= 2000 chars each, <= 8000 total), requestId?, conversationId? }`.
 Response: `{ requestId, status: 'ok', passages[], mentionedSaintIds[], evidence }` or `{ requestId, status: 'refused', reason, message, suggestedSaintIds? }`. Errors: `{ error: { code, message } }` with fixed text.
+
+## Abuse protection (Task 10d)
+
+See `docs/ABUSE_PROTECTION.md`. `POST /v1/reports` is a stub (stores nothing).
+Production start requires `ATTESTATION_MODE=play_integrity` and a real LLM provider.

@@ -13,7 +13,8 @@ import { CorpusService } from '../src/sources/corpus.service';
 import { checkForbiddenContent } from '../src/theological-policy/forbidden';
 import { classifySafety, isSensitiveTopic } from '../src/theological-policy/safety';
 import { SYSTEM_PROMPT, buildPrompt } from '../src/theological-policy/system-prompt';
-import { testConfig } from './helpers';
+import { SpendGuard } from '../src/protection/spend-guard';
+import { testConfig, testProtection } from './helpers';
 
 const P = (id: string, text: string): RetrievedPassage => ({
   paragraphId: id, saintId: 's', saintTitle: 'S', sectionId: 'c', sectionTitle: 'C', page: 3, kind: 'body', text, score: 1,
@@ -116,7 +117,7 @@ describe('ChatService', () => {
   });
   const svc = (b: FakeBehavior) => {
     const llm = new FakeLlmProvider(b);
-    return { llm, chat: new ChatService(retrieval, llm, loadPricing(testConfig().pricingFile)) };
+    return { llm, chat: new ChatService(retrieval, llm, loadPricing(testConfig().pricingFile), new SpendGuard(testProtection())) };
   };
   const Q = 'ماذا يقول الكتاب عن الصوم والانقطاع عن الطعام؟';
 

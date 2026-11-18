@@ -7,6 +7,42 @@ export interface AppConfig {
   llm: LlmConfig;
   /** Versioned pricing file (config/pricing.json). */
   pricingFile: string;
+  protection: ProtectionConfig;
+  /** Express "trust proxy" hops so the client IP is read correctly behind a proxy. */
+  trustProxy: number;
+}
+
+export type AttestationMode = 'off' | 'test' | 'play_integrity';
+
+export interface RateLimitConfig {
+  max: number;
+  windowSeconds: number;
+}
+
+/**
+ * Abuse protection and spend controls (SPEC 7.5). The numeric defaults are
+ * PROPOSED values: SPEC section 19 decision 5 (budget, limits, cap) is open
+ * and the owner sets the real ones.
+ */
+export interface ProtectionConfig {
+  ipLimit: RateLimitConfig;
+  installationLimit: RateLimitConfig;
+  attestation: {
+    mode: AttestationMode;
+    /** mode=test: the token the backend accepts (dev/CI only). */
+    testToken?: string;
+    /** mode=play_integrity */
+    packageName?: string;
+    serviceAccountFile?: string;
+    /** Optional allow-list of signing-certificate SHA-256 digests (base64). */
+    certDigests: string[];
+    maxTokenAgeSeconds: number;
+  };
+  dailyCapUsd: number;
+  /** Charged to the daily total when a call's real cost is unknown. */
+  unknownCostUsd: number;
+  killSwitch: boolean;
+  maxConcurrentModelCalls: number;
 }
 
 export type LlmProviderName = 'fake' | 'openai' | 'gemini';
@@ -34,6 +70,8 @@ export function configFromEnv(env: NodeJS.ProcessEnv = process.env): AppConfig {
     port: Number(env.PORT ?? 3000),
     pricingFile: env.PRICING_FILE ?? 'config/pricing.json',
     llm: llmConfigFromEnv(env),
+    trustProxy: Number(env.TRUST_PROXY_HOPS ?? 0),
+    protection: protectionFromEnv(env),
   };
 }
 
@@ -53,4 +91,40 @@ export function llmConfigFromEnv(env: NodeJS.ProcessEnv): LlmConfig {
     if (!apiKey) throw new ConfigError(`The API key for ${provider} is not set.`);
   }
   return { provider, model: env.LLM_MODEL, apiKey, timeoutMs, maxOutputTokens };
+}
+
+const positive = (name: string, raw: string | undefined, fallback: number): number => {
+  const n = Number(raw ?? fallback);
+  if (!Number.isFinite(n) || n <= 0) throw new ConfigError(`${name} must be a positive number.`);
+  return n;
+};
+
+export function protectionFromEnv(env: NodeJS.ProcessEnv): ProtectionConfig {
+  const mode = (env.ATTESTATION_MODE ?? 'off') as AttestationMode;
+  if (!['off', 'test', 'play_integrity'].includes(mode)) {
+    throw new ConfigError('ATTESTATION_MODE must be off, test or play_integrity.');
+  }
+  if (mode === 'test' && !env.ATTESTATION_TEST_TOKEN) throw new ConfigError('ATTESTATION_TEST_TOKEN is required in test mode.');
+  if (mode === 'play_integrity' && (!env.PLAY_PACKAGE_NAME || !env.GOOGLE_SERVICE_ACCOUNT_FILE)) {
+    throw new ConfigError('PLAY_PACKAGE_NAME and GOOGLE_SERVICE_ACCOUNT_FILE are required for play_integrity.');
+  }
+  return {
+    ipLimit: { max: positive('RATE_IP_MAX', env.RATE_IP_MAX, 60), windowSeconds: positive('RATE_IP_WINDOW_SECONDS', env.RATE_IP_WINDOW_SECONDS, 3600) },
+    installationLimit: {
+      max: positive('RATE_INSTALLATION_MAX', env.RATE_INSTALLATION_MAX, 20),
+      windowSeconds: positive('RATE_INSTALLATION_WINDOW_SECONDS', env.RATE_INSTALLATION_WINDOW_SECONDS, 3600),
+    },
+    attestation: {
+      mode,
+      testToken: env.ATTESTATION_TEST_TOKEN,
+      packageName: env.PLAY_PACKAGE_NAME,
+      serviceAccountFile: env.GOOGLE_SERVICE_ACCOUNT_FILE,
+      certDigests: (env.PLAY_CERT_SHA256 ?? '').split(',').map((x) => x.trim()).filter(Boolean),
+      maxTokenAgeSeconds: positive('ATTESTATION_MAX_AGE_SECONDS', env.ATTESTATION_MAX_AGE_SECONDS, 300),
+    },
+    dailyCapUsd: positive('DAILY_SPEND_CAP_USD', env.DAILY_SPEND_CAP_USD, 5),
+    unknownCostUsd: positive('UNKNOWN_COST_USD', env.UNKNOWN_COST_USD, 0.02),
+    killSwitch: env.AI_KILL_SWITCH === 'true',
+    maxConcurrentModelCalls: positive('MAX_CONCURRENT_MODEL_CALLS', env.MAX_CONCURRENT_MODEL_CALLS, 8),
+  };
 }

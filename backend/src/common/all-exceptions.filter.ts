@@ -13,11 +13,25 @@ export class AllExceptionsFilter implements ExceptionFilter {
       const body = exception.getResponse();
       const inner = (body as { error?: unknown } | null)?.error;
       const isOurs = typeof inner === 'object' && inner !== null && 'code' in inner;
+      const retry = (inner as { retryAfterSeconds?: unknown } | undefined)?.retryAfterSeconds;
+      if (isOurs && typeof retry === 'number') res.setHeader('Retry-After', String(retry));
       res.status(status).json(
         isOurs
           ? body
-          : { error: { code: status === 404 ? 'not_found' : 'http_error', message: 'Request failed.' } },
+          : {
+              error: {
+                code: status === 404 ? 'not_found' : status === 413 ? 'request_too_large' : status === 400 ? 'invalid_request' : 'http_error',
+                message: 'Request failed.',
+              },
+            },
       );
+      return;
+    }
+    // Body-parser errors (oversized or malformed JSON) are plain errors with a status.
+    const bp = exception as { status?: unknown; type?: unknown } | null;
+    if (typeof bp?.status === 'number' && typeof bp.type === 'string' && bp.status >= 400 && bp.status < 500) {
+      const code = bp.status === 413 ? 'request_too_large' : 'invalid_request';
+      res.status(bp.status).json({ error: { code, message: 'The request is not valid.' } });
       return;
     }
     // Log the error class only, never its message (it could contain input).

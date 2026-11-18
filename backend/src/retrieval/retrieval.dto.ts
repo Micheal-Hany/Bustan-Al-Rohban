@@ -13,6 +13,10 @@ const requestSchema = z
     requestId: z.string().regex(/^[A-Za-z0-9_-]{1,64}$/).optional(),
     /** Correlation only; the backend never uses it to load or store history. */
     conversationId: z.string().regex(/^[A-Za-z0-9_-]{1,64}$/).optional(),
+    /** Client-generated, stable per install. Rate-limit key only; NOT authentication. */
+    installationId: z.string().regex(/^[A-Za-z0-9_-]{16,64}$/).optional(),
+    /** Play Integrity token (SPEC 12.3). */
+    attestationToken: z.string().min(1).max(8192).optional(),
     mode: z.enum(['saint_scope', 'book_scope']),
     scope: z
       .object({ bookId: id.optional(), saintId: id.optional(), sectionId: id.optional() })
@@ -34,6 +38,8 @@ const requestSchema = z
 
 export interface ParsedRequest extends RetrievalRequest {
   requestId?: string;
+  installationId?: string;
+  attestationToken?: string;
 }
 
 /**
@@ -50,5 +56,11 @@ export function parseRetrievalRequest(body: unknown): ParsedRequest {
   if (messages.reduce((n, m) => n + m.text.length, 0) > MAX_TOTAL_CHARS) {
     throw badRequest('request_too_large', 'The conversation is too long.');
   }
-  return { requestId: r.data.requestId, mode: r.data.mode, scope: r.data.scope, messages };
+  return {
+    requestId: r.data.requestId,
+    installationId: r.data.installationId,
+    attestationToken: r.data.attestationToken,
+    mode: r.data.mode, scope: r.data.scope,
+    messages,
+  };
 }

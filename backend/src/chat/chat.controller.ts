@@ -1,7 +1,9 @@
-import { Body, Controller, HttpCode, Inject, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Inject, Post, Req } from '@nestjs/common';
+import type { Request } from 'express';
 import { randomUUID } from 'node:crypto';
 import { RequestLogger } from '../common/request-logger';
 import { parseRetrievalRequest } from '../retrieval/retrieval.dto';
+import { ProtectionService } from '../protection/protection.service';
 import { ChatService } from './chat.service';
 
 /** POST /v1/chat: stateless, non-streaming (SPEC 12.3). */
@@ -10,13 +12,16 @@ export class ChatController {
   constructor(
     @Inject(ChatService) private readonly chat: ChatService,
     @Inject(RequestLogger) private readonly logger: RequestLogger,
+    @Inject(ProtectionService) private readonly protection: ProtectionService,
   ) {}
 
   @Post('chat')
   @HttpCode(200)
-  async post(@Body() body: unknown) {
+  async post(@Body() body: unknown, @Req() http: Request) {
     const started = Date.now();
+    this.protection.admitIp(http.ip);
     const req = parseRetrievalRequest(body);
+    await this.protection.admitClient(req);
     const requestId = req.requestId ?? randomUUID();
     const result = await this.chat.answer(req);
     this.logger.log({

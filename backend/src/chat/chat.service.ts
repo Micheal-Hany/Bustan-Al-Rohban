@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AppError } from '../common/app-error';
 import { LLM_PROVIDER, LlmProvider, LlmUsage, ProviderError } from '../providers/llm.port';
 import { Cost, PricingTable, estimateCost } from '../providers/pricing';
+import { SpendGuard } from '../protection/spend-guard';
 import { REFUSAL_MESSAGE, RetrievalService } from '../retrieval/retrieval.service';
 import { RetrievalRequest, RetrievedPassage } from '../retrieval/retrieval.types';
 import {
@@ -80,6 +81,7 @@ export class ChatService {
     @Inject(RetrievalService) private readonly retrieval: RetrievalService,
     @Inject(LLM_PROVIDER) private readonly llm: LlmProvider,
     @Inject(PRICING) private readonly pricing: PricingTable,
+    @Inject(SpendGuard) private readonly spend: SpendGuard,
   ) {}
 
   async answer(req: RetrievalRequest): Promise<ChatResult> {
@@ -124,6 +126,8 @@ export class ChatService {
     });
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       let raw;
+      // The cap is checked before EVERY model call, retries included (503 if over).
+      this.spend.acquire();
       try {
         raw = await this.llm.generate({
           system: SYSTEM_PROMPT,
@@ -135,10 +139,15 @@ export class ChatService {
       } catch (e) {
         // Provider details are never forwarded to the client.
         const kind = e instanceof ProviderError ? e.kind : 'server';
+        // A timed-out or unreadable call may still have been billed.
+        if (kind === 'timeout' || kind === 'bad_response') this.spend.record(undefined);
         if (kind === 'timeout') throw new AppError(504, 'provider_timeout', 'The answer service timed out.');
         if (kind === 'rate_limited') throw new AppError(503, 'provider_busy', 'The answer service is busy.');
         throw new AppError(502, 'provider_error', 'The answer service is unavailable.');
+      } finally {
+        this.spend.release();
       }
+      this.spend.record(estimateCost(this.pricing, raw.provider, raw.model, raw.usage));
       provider = raw.provider;
       model = raw.model;
       // Usage is summed over attempts; one missing report makes the total unknown.

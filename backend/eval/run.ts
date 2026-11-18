@@ -15,6 +15,7 @@ import { join } from 'node:path';
 import { ChatResult, ChatService } from '../src/chat/chat.service';
 import { isVerbatim } from '../src/chat/validation';
 import { FakeBehavior, FakeLlmProvider } from '../src/providers/fake-llm';
+import { SpendGuard } from '../src/protection/spend-guard';
 import { RetrievalService } from '../src/retrieval/retrieval.service';
 import { RetrievalRequest } from '../src/retrieval/retrieval.types';
 import { SYSTEM_PROMPT } from '../src/theological-policy/system-prompt';
@@ -64,6 +65,8 @@ const corpusSvc = new CorpusService({
   port: 0,
   pricingFile: '',
   llm: { provider: 'fake', timeoutMs: 1000, maxOutputTokens: 500 },
+  trustProxy: 0,
+  protection: {} as never,
 });
 const byId = new Map(corpusSvc.corpus.passages.map((p) => [p.paragraphId, p]));
 const retrieval = new RetrievalService(corpusSvc);
@@ -82,7 +85,7 @@ interface Outcome {
 
 async function run(c: Case): Promise<Outcome> {
   const llm = new FakeLlmProvider(c.fake);
-  const chat = new ChatService(retrieval, llm, pricing);
+  const chat = new ChatService(retrieval, llm, pricing, new SpendGuard({ dailyCapUsd: 1e9, unknownCostUsd: 0, killSwitch: false, maxConcurrentModelCalls: 8 }));
   const req: RetrievalRequest = { mode: c.mode, scope: c.scope, messages: c.messages };
   const problems: string[] = [];
   let res: ChatResult;

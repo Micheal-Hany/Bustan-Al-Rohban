@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { AppConfig } from '../src/common/config';
+import { AppConfig, ProtectionConfig } from '../src/common/config';
 import { loadCorpus } from '../src/sources/corpus.loader';
 
 export const FIXTURE_DIR = join(__dirname, 'fixtures', 'corpus');
@@ -13,7 +13,20 @@ export const testConfig = (over: Partial<AppConfig> = {}): AppConfig => ({
   port: 0,
   pricingFile: join(__dirname, 'fixtures', 'pricing.json'),
   llm: { provider: 'fake', timeoutMs: 1000, maxOutputTokens: 500 },
+  trustProxy: 0,
+  protection: testProtection(),
   ...over,
 });
 
 export const fixtureCorpus = () => loadCorpus(FIXTURE_DIR);
+
+export const testProtection = (over: Partial<ProtectionConfig> = {}): ProtectionConfig => ({
+  ipLimit: { max: 1000, windowSeconds: 3600 },
+  installationLimit: { max: 1000, windowSeconds: 3600 },
+  attestation: { mode: 'off', certDigests: [], maxTokenAgeSeconds: 300 },
+  dailyCapUsd: 1000,
+  unknownCostUsd: 0.02,
+  killSwitch: false,
+  maxConcurrentModelCalls: 8,
+  ...over,
+});
