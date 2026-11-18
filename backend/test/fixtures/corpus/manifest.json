@@ -1,0 +1,40 @@
+{
+ "schemaVersion": 1,
+ "contentVersion": 7,
+ "bookId": "bustan-al-rohban",
+ "title": "بستان الرهبان",
+ "language": "ar",
+ "fixture": true,
+ "saints": [
+  {
+   "id": "saint-a",
+   "title": "[تجريبي] القديس ألفا",
+   "order": 1,
+   "aliases": [
+    "القديس ألفا",
+    "ألفا"
+   ],
+   "file": "saints/saint-a.json"
+  },
+  {
+   "id": "saint-b",
+   "title": "[تجريبي] القديس بيتا",
+   "order": 2,
+   "aliases": [
+    "القديس بيتا",
+    "بيتا"
+   ],
+   "file": "saints/saint-b.json"
+  },
+  {
+   "id": "saint-c",
+   "title": "[تجريبي] القديس جاما",
+   "order": 3,
+   "aliases": [
+    "القديس جاما",
+    "جاما"
+   ],
+   "file": "saints/saint-c.json"
+  }
+ ]
+}

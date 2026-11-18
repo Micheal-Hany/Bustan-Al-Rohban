@@ -17,3 +17,4 @@ android/key.properties
 # Backend (later tasks)
 node_modules/
 .env
+backend/dist/
