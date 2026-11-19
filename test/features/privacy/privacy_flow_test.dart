@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../features/ai_chat/history/chat_test_support.dart';
+import '../library/library_test_support.dart';
 
 Future<void> _pump(WidgetTester tester, Widget app) async {
   tester.view.physicalSize = const Size(800, 2400);
@@ -33,7 +34,9 @@ void main() {
     });
 
     testWidgets('is reachable from the chat list', (tester) async {
-      await _pump(tester, BustanApp(chatApi: FakeChatApi()));
+      await _pump(tester, BustanApp(
+              chatApi: FakeChatApi(),
+              libraryRepository: repoFor(probeFor(twoSaintBook()))));
       await tester.tap(find.byKey(const Key('nav-chat')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('chat-privacy-link')));
@@ -90,7 +93,10 @@ void main() {
       final api = FakeChatApi();
       final notice = InMemoryChatNoticeStore();
       await openNewConversation(
-          tester, BustanApp(chatApi: api, chatNoticeStore: notice));
+          tester, BustanApp(
+              chatApi: api,
+              libraryRepository: repoFor(probeFor(twoSaintBook())),
+              chatNoticeStore: notice));
       await tapSend(tester, 'سؤال');
       expect(find.byKey(const Key('chat-notice-dialog')), findsOneWidget);
       expect(api.requests, isEmpty);
@@ -105,7 +111,10 @@ void main() {
         (tester) async {
       final api = FakeChatApi();
       await openNewConversation(tester,
-          BustanApp(chatApi: api, chatNoticeStore: InMemoryChatNoticeStore()));
+          BustanApp(
+              chatApi: api,
+              libraryRepository: repoFor(probeFor(twoSaintBook())),
+              chatNoticeStore: InMemoryChatNoticeStore()));
       await tapSend(tester, 'سؤال');
       await tester.tap(find.byKey(const Key('chat-notice-cancel')));
       await tester.pumpAndSettle();
@@ -128,6 +137,7 @@ void main() {
         tester,
         BustanApp(
             chatApi: api,
+            libraryRepository: repoFor(probeFor(twoSaintBook())),
             chatNoticeStore: InMemoryChatNoticeStore(accepted: true)),
       );
       await tapSend(tester, 'سؤال');

@@ -30,7 +30,7 @@ class PrivacyScreen extends StatelessWidget {
           if (privacyContact.isNotEmpty) ...[
             Text(AppStrings.privacyContactLabel,
                 style: theme.textTheme.titleMedium),
-            Text(privacyContact, key: const Key('privacy-contact')),
+            const Text(privacyContact, key: Key('privacy-contact')),
           ],
         ],
       ),

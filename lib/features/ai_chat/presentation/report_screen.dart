@@ -171,14 +171,14 @@ class RadioGroupCompat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(children: [
       for (final r in ReportReason.values)
-        RadioListTile<ReportReason>(
+        ListTile(
           key: Key('report-reason-${r.code}'),
-          value: r,
-          groupValue: value,
+          leading: Icon(value == r
+              ? Icons.radio_button_checked
+              : Icons.radio_button_unchecked),
           title: Text(reasonLabel(r)),
-          onChanged: (v) {
-            if (v != null) onChanged(v);
-          },
+          selected: value == r,
+          onTap: () => onChanged(r),
         ),
     ]);
   }
