@@ -136,7 +136,65 @@ class AppStrings {
   static const chatMessageFailed = 'لم تُرسل';
   static const chatMessagePending = 'جارٍ الإرسال';
   static const chatEmptyConversation = 'لا توجد رسائل في هذه المحادثة';
-  static const chatTestHint = 'رسالة تجريبية (للتطوير فقط)';
-  static const chatTestReply = '[تجريبي] رد تجريبي - ليس من الكتاب.';
   static const chatSend = 'إرسال';
+
+  // AI chat (Task 11)
+  static const chatBookOnly = 'إجابات من كتاب بستان الرهبان فقط';
+  static const chatScopeLabel = 'النطاق';
+  static const chatScopeBookFull = 'كل الكتاب';
+  static const chatScopeSaintOf = 'القديس';
+  static const chatScopeSectionOf = 'قسم من';
+  static const chatScopeChange = 'تغيير النطاق';
+  static const chatScopeChangeNote =
+      'يبدأ هذا محادثة جديدة بالنطاق الذي تختاره، وتبقى هذه المحادثة كما هي.';
+  static const chatScopeChooseSaint = 'أو اختر قديسًا';
+  static const chatAskPrompt =
+      'اسأل عن ما ورد في كتاب بستان الرهبان. لن تُعطى إجابة إلا من نصوص الكتاب.';
+  static const chatInputHint = 'اكتب سؤالك';
+  static const chatSending = 'جارٍ البحث في الكتاب…';
+  static const chatSendRetry = 'إعادة المحاولة';
+  static const chatDismiss = 'إغلاق';
+  static const chatSendFailedKept = 'نصّ سؤالك محفوظ في خانة الكتابة.';
+  static const chatErrOffline = 'لا يوجد اتصال بالإنترنت. اتصل بالشبكة ثم أعد المحاولة.';
+  static const chatErrTimeout = 'استغرق الرد وقتًا أطول من المعتاد. أعد المحاولة.';
+  static const chatErrRateLimited = 'أرسلت أسئلة كثيرة في وقت قصير. حاول بعد قليل.';
+  static const chatErrUnavailable =
+      'المساعد غير متاح مؤقتًا. حاول لاحقًا. يمكنك متابعة قراءة الكتاب.';
+  static const chatErrAttestation = 'تعذّر التحقق من التطبيق. حدّث التطبيق من المتجر ثم أعد المحاولة.';
+  static const chatErrServer = 'حدث خطأ في الخدمة. أعد المحاولة لاحقًا.';
+  static const chatErrBadResponse = 'وصل رد غير مفهوم. أعد المحاولة.';
+  static const chatErrStorage = 'وصلت الإجابة لكن تعذّر حفظها على الجهاز.';
+  static const chatErrNotConfigured = 'خدمة المساعد غير مُعدّة في هذا الإصدار.';
+  static const chatSecondsWord = 'ثانية';
+  static const chatBlockQuotation = 'اقتباس من الكتاب';
+  static const chatBlockParaphrase = 'تلخيص لما في الكتاب';
+  static const chatBlockInference = 'استنتاج حذر (ليس نصًا من الكتاب)';
+  static const chatSources = 'المصادر';
+  static const chatPageShort = 'ص';
+  static const chatRefusedAskBook = 'اسأل في كل الكتاب';
+  static const chatSafetyTitle = 'ملاحظة مهمة';
+  static const chatReportAnswer = 'الإبلاغ عن هذه الإجابة';
+  static const reportTitle = 'الإبلاغ عن إجابة';
+  static const reportWhatIsSent = 'ما سيُرسل بالضبط';
+  static const reportNotSent = 'لن تُرسل بقية المحادثة ولا أي رسالة أخرى.';
+  static const reportFieldAnswer = 'نص الإجابة';
+  static const reportFieldQuestion = 'السؤال الذي أنتج الإجابة';
+  static const reportFieldCitations = 'أرقام الفقرات المستشهد بها';
+  static const reportFieldVersion = 'إصدار محتوى الكتاب';
+  static const reportFieldModel = 'المزوّد والنموذج';
+  static const reportFieldReason = 'سبب الإبلاغ';
+  static const reportFieldNote = 'ملاحظة (اختياري)';
+  static const reportNoCitations = 'لا يوجد';
+  static const reportUnknown = 'غير معروف';
+  static const reportSend = 'إرسال البلاغ';
+  static const reportUnavailable =
+      'الإبلاغ غير مُفعَّل بعد في هذا الإصدار، ولم يُرسل شيء.';
+  static const reportSentThanks = 'شكرًا. وصل بلاغك.';
+  static const reportReasonWrong = 'معلومة خاطئة أو مختلقة';
+  static const reportReasonNotBook = 'ليست من الكتاب';
+  static const reportReasonOffensive = 'مسيئة أو غير آمنة';
+  static const reportReasonDoctrinal = 'ملاحظة عقائدية';
+  static const reportReasonOther = 'سبب آخر';
+  static const reportChooseReason = 'اختر سببًا';
+  static const askAboutSaint = 'اسأل المساعد عن هذا القديس';
 }

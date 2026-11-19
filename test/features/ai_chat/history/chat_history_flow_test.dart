@@ -10,7 +10,7 @@ Future<void> _openChat(WidgetTester tester, ChatStore store) async {
   tester.view.physicalSize = const Size(800, 1600);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  await tester.pumpWidget(BustanApp(chatStore: store));
+  await tester.pumpWidget(BustanApp(chatStore: store, chatApi: FakeChatApi()));
   await tester.pumpAndSettle();
   await tester.tap(find.byKey(const Key('nav-chat')));
   await tester.pumpAndSettle();
@@ -98,17 +98,16 @@ void main() {
       'and the messages persist', (tester) async {
     final store = InMemoryChatStore();
     await _openChat(tester, store);
-    await tester.tap(find.byKey(const Key('chat-new-debug')));
+    await tester.tap(find.byKey(const Key('chat-new')));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('conversation-screen')), findsOneWidget);
-    expect(find.text(AppStrings.chatEmptyConversation), findsOneWidget);
+    expect(find.byKey(const Key('empty-view')), findsOneWidget);
 
-    await tester.enterText(
-        find.byKey(const Key('chat-test-input')), 'ما هي المحبة؟');
-    await tester.tap(find.byKey(const Key('chat-test-send')));
+    await tester.enterText(find.byKey(const Key('chat-input')), 'ما هي المحبة؟');
+    await tester.tap(find.byKey(const Key('chat-send')));
     await tester.pumpAndSettle();
     expect(find.text('ما هي المحبة؟'), findsWidgets);
-    expect(find.text(AppStrings.chatTestReply), findsOneWidget);
+    expect(find.byKey(const Key('block-quotation')), findsOneWidget);
 
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
@@ -120,8 +119,8 @@ void main() {
     // Reopen and continue.
     await tester.tap(find.byKey(Key('conversation-${c.id}')));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const Key('chat-test-input')), 'سؤال ثان');
-    await tester.tap(find.byKey(const Key('chat-test-send')));
+    await tester.enterText(find.byKey(const Key('chat-input')), 'سؤال ثان');
+    await tester.tap(find.byKey(const Key('chat-send')));
     await tester.pumpAndSettle();
     expect((await store.messages(c.id)).length, 4);
   });

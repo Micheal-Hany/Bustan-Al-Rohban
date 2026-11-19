@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -20,25 +19,20 @@ String scopeLabel(ChatScopeKind scope) => switch (scope) {
 
 /// Past conversations, most recently updated first. Works offline.
 class ChatHistoryScreen extends StatelessWidget {
-  const ChatHistoryScreen({super.key, this.showDevTools = kDebugMode});
-
-  /// Shows the debug-only "new conversation" button.
-  final bool showDevTools;
+  const ChatHistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
           ChatHistoryCubit(context.read<ChatStore>())..load(),
-      child: _View(showDevTools: showDevTools),
+      child: const _View(),
     );
   }
 }
 
 class _View extends StatelessWidget {
-  const _View({required this.showDevTools});
-
-  final bool showDevTools;
+  const _View();
 
   Future<void> _confirmClear(BuildContext context) async {
     final cubit = context.read<ChatHistoryCubit>();
@@ -83,22 +77,19 @@ class _View extends StatelessWidget {
                 ),
             ],
           ),
-          floatingActionButton: showDevTools
-              ? FloatingActionButton(
-                  key: const Key('chat-new-debug'),
-                  tooltip: AppStrings.chatNewConversation,
-                  onPressed: () async {
-                    final id = await context.read<ChatHistoryCubit>().create();
-                    if (context.mounted) {
-                      await context.push(AppRoutes.conversation(id));
-                      if (context.mounted) {
-                        context.read<ChatHistoryCubit>().load();
-                      }
-                    }
-                  },
-                  child: const Icon(AppIcons.add),
-                )
-              : null,
+          floatingActionButton: FloatingActionButton.extended(
+            key: const Key('chat-new'),
+            icon: const Icon(AppIcons.add),
+            label: const Text(AppStrings.chatNewConversation),
+            onPressed: () async {
+              final cubit = context.read<ChatHistoryCubit>();
+              final id = await cubit.create();
+              if (context.mounted) {
+                await context.push(AppRoutes.conversation(id));
+                cubit.load();
+              }
+            },
+          ),
           body: Column(children: [
             const Padding(
               padding: EdgeInsets.fromLTRB(16, 8, 16, 0),

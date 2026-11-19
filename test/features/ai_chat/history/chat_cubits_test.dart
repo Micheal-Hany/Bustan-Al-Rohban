@@ -112,42 +112,5 @@ void main() {
       expect(cubit.state.status, LoadStatus.error);
       await cubit.close();
     });
-
-    test('the test exchange stores a user message and a FAKE reply and sets '
-        'the title', () async {
-      final store = InMemoryChatStore();
-      final c = await store.createConversation();
-      final cubit = ConversationCubit(store, c.id);
-      await cubit.load();
-      await cubit.addTestExchange('  ما هي الطاعة؟ ');
-      expect(cubit.state.messages.map((m) => m.role),
-          [ChatRole.user, ChatRole.assistant]);
-      expect(cubit.state.messages.first.content, 'ما هي الطاعة؟');
-      expect(cubit.state.conversation!.title, 'ما هي الطاعة؟');
-      await cubit.close();
-    });
-
-    test('blank input stores nothing', () async {
-      final store = InMemoryChatStore();
-      final c = await store.createConversation();
-      final cubit = ConversationCubit(store, c.id);
-      await cubit.load();
-      await cubit.addTestExchange('   ');
-      expect(await store.messages(c.id), isEmpty);
-      await cubit.close();
-    });
-
-    test('a failing write keeps what is shown and reports the error',
-        () async {
-      final store = FailingChatStore(InMemoryChatStore());
-      final ids = await seedTwo(store);
-      final cubit = ConversationCubit(store, ids.older);
-      await cubit.load();
-      store.failWrites = true;
-      await cubit.addTestExchange('x');
-      expect(cubit.state.messages, hasLength(2));
-      expect(cubit.state.error, isNotNull);
-      await cubit.close();
-    });
   });
 }

@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/router/app_router.dart';
 import '../../../app/strings.dart';
+import '../../../app/theme/app_icons.dart';
 import '../../../core/widgets/status_views.dart';
+import '../../ai_chat/domain/chat_models.dart';
+import '../../ai_chat/domain/chat_store.dart';
 import '../data/library_repository.dart';
 import 'load_status.dart';
 import 'page_label.dart';
@@ -59,6 +62,23 @@ class _SectionsView extends StatelessWidget {
         return ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: OutlinedButton.icon(
+                key: const Key('ask-about-saint'),
+                icon: const Icon(AppIcons.chat),
+                label: const Text(AppStrings.askAboutSaint),
+                onPressed: () async {
+                  final store = context.read<ChatStore>();
+                  final router = GoRouter.of(context);
+                  final c = await store.createConversation(
+                    scope: ChatScopeKind.saint,
+                    saintId: saint.id,
+                  );
+                  router.push(AppRoutes.conversation(c.id));
+                },
+              ),
+            ),
             if (saint.aliases.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),

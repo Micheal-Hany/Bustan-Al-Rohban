@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:bustan_al_rohban/features/ai_chat/domain/assistant_reply.dart';
+import 'package:bustan_al_rohban/features/ai_chat/domain/chat_api.dart';
 import 'package:bustan_al_rohban/features/ai_chat/domain/chat_models.dart';
 import 'package:bustan_al_rohban/features/ai_chat/domain/chat_store.dart';
 
@@ -104,3 +108,69 @@ Future<({String older, String newer})> seedTwo(ChatStore store) async {
       conversationId: b.id, role: ChatRole.user, content: 'سؤال جديد');
   return (older: a.id, newer: b.id);
 }
+
+// ---- Task 11: fake backend client and sample replies ----
+
+/// Returns queued replies (or throws queued exceptions), records requests,
+/// and can hold the next call open with [hold].
+class FakeChatApi implements ChatApi {
+  FakeChatApi([List<Object>? queue]) : queue = [...?queue];
+
+  final List<Object> queue;
+  final List<ChatRequest> requests = [];
+  Completer<AssistantReply>? hold;
+
+  @override
+  Future<AssistantReply> ask(ChatRequest request) async {
+    requests.add(request);
+    final h = hold;
+    if (h != null) return h.future;
+    final next = queue.isEmpty ? sampleAnswer : queue.removeAt(0);
+    if (next is ChatApiException) throw next;
+    return next as AssistantReply;
+  }
+}
+
+const sampleRef = SourceRef(
+  paragraphId: 'p-000001',
+  saintId: 'saint-a',
+  saintTitle: 'القديس الأول',
+  sectionId: 'sec-a-001',
+  sectionTitle: 'قسم أ ١',
+  page: 3,
+);
+
+const sampleAnswer = AnsweredReply(
+  blocks: [
+    AnswerBlock(
+      type: BlockType.quotation,
+      text: 'نص الاقتباس من الكتاب',
+      references: [sampleRef],
+    ),
+    AnswerBlock(
+      type: BlockType.paraphrase,
+      text: 'تلخيص لما ورد',
+      references: [sampleRef],
+    ),
+  ],
+  pastoralNote: 'للقرارات الخاصة استشر أب اعترافك.',
+  provider: 'fake',
+  model: 'fake-1',
+);
+
+const sampleRefusal = RefusedReply(
+  reason: 'insufficient_evidence',
+  message: 'لم أجد في كتاب بستان الرهبان ما يجيب عن هذا السؤال.',
+);
+
+const sampleOutOfScope = RefusedReply(
+  reason: 'out_of_scope_saint',
+  message: 'لم أجد في كتاب بستان الرهبان ما يجيب عن هذا السؤال.',
+  suggestedSaintIds: ['saint-b'],
+);
+
+const sampleSafety = SafetyReply(
+  category: 'confession_sacrament',
+  message: 'تحدث مع أب اعترافك.',
+  referral: ['confession_father'],
+);

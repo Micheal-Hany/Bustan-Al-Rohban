@@ -5,7 +5,10 @@ import 'package:go_router/go_router.dart';
 
 import '../core/content/asset_content_source.dart';
 import '../core/content/content_loader.dart';
+import '../features/ai_chat/domain/chat_api.dart';
 import '../features/ai_chat/domain/chat_store.dart';
+import '../features/ai_chat/domain/client_identity.dart';
+import '../features/ai_chat/domain/report.dart';
 import '../features/audio/domain/speech_cubit.dart';
 import '../features/audio/domain/tts_engine.dart';
 import '../features/bookmarks/domain/bookmark_store.dart';
@@ -32,6 +35,10 @@ class BustanApp extends StatefulWidget {
     this.libraryRepository,
     this.ttsEngineFactory,
     this.chatStore,
+    this.chatApi,
+    this.installationIds,
+    this.attestation,
+    this.reportSender,
     this.bookmarkStore,
     this.progressStore,
     this.prefsStore,
@@ -41,6 +48,13 @@ class BustanApp extends StatefulWidget {
 
   /// Local chat history (memory-only by default; `main.dart` passes Drift).
   final ChatStore? chatStore;
+
+  /// The backend client (default: unconfigured, so chat shows a clear
+  /// "not configured" error instead of failing silently).
+  final ChatApi? chatApi;
+  final InstallationIdStore? installationIds;
+  final AttestationProvider? attestation;
+  final ReportSender? reportSender;
 
   /// Creates the text-to-speech engine on first use (tests pass a fake).
   final TtsEngine Function()? ttsEngineFactory;
@@ -64,6 +78,13 @@ class _BustanAppState extends State<BustanApp> {
   late final ProgressCubit _progress =
       ProgressCubit(widget.progressStore ?? InMemoryProgressStore())..load();
   late final ChatStore _chat = widget.chatStore ?? InMemoryChatStore();
+  late final ChatApi _chatApi = widget.chatApi ?? const UnconfiguredChatApi();
+  late final InstallationIdStore _installationIds =
+      widget.installationIds ?? InMemoryInstallationIdStore();
+  late final AttestationProvider _attestation =
+      widget.attestation ?? const NoAttestationProvider();
+  late final ReportSender _reportSender =
+      widget.reportSender ?? const UnavailableReportSender();
   late final SpeechCubit _speech =
       SpeechCubit(widget.ttsEngineFactory ?? FlutterTtsEngine.new);
   late final ReadingPrefsCubit _prefs =
@@ -86,6 +107,10 @@ class _BustanAppState extends State<BustanApp> {
         RepositoryProvider<LibraryRepository>.value(value: _library),
         RepositoryProvider<SearchRepository>.value(value: _search),
         RepositoryProvider<ChatStore>.value(value: _chat),
+        RepositoryProvider<ChatApi>.value(value: _chatApi),
+        RepositoryProvider<InstallationIdStore>.value(value: _installationIds),
+        RepositoryProvider<AttestationProvider>.value(value: _attestation),
+        RepositoryProvider<ReportSender>.value(value: _reportSender),
       ],
       child: MultiBlocProvider(
         providers: [

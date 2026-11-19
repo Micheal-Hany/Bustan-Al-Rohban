@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Chat needs the network; reading the book never does. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="bustan_al_rohban"
         android:name="${applicationName}"

@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 /// Single place that maps app concepts to Iconsax icons, so any icon can be
@@ -16,6 +16,7 @@ class AppIcons {
   static const IconData delete = Iconsax.trash;
   static const IconData editorial = Iconsax.note_text;
   static const IconData send = Iconsax.send_1;
+  static const IconData report = Icons.flag_outlined;
   static const IconData add = Iconsax.add;
   static const IconData play = Iconsax.play;
   static const IconData pause = Iconsax.pause;
