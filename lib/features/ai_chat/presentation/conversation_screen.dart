@@ -12,8 +12,11 @@ import '../../library/presentation/load_status.dart';
 import '../domain/assistant_reply.dart';
 import '../domain/chat_api.dart';
 import '../domain/chat_models.dart';
+import '../domain/chat_notice_store.dart';
 import '../domain/chat_store.dart';
 import '../domain/client_identity.dart';
+import 'chat_error_text.dart';
+import 'chat_notice_dialog.dart';
 import 'conversation_cubit.dart';
 import 'report_screen.dart';
 import 'scope_sheet.dart';
@@ -42,20 +45,6 @@ class ConversationScreen extends StatelessWidget {
   }
 }
 
-String errorText(ChatErrorKind kind, int? retryAfter) => switch (kind) {
-      ChatErrorKind.notConfigured => AppStrings.chatErrNotConfigured,
-      ChatErrorKind.offline => AppStrings.chatErrOffline,
-      ChatErrorKind.timeout => AppStrings.chatErrTimeout,
-      ChatErrorKind.rateLimited => retryAfter == null
-          ? AppStrings.chatErrRateLimited
-          : '${AppStrings.chatErrRateLimited} ($retryAfter ${AppStrings.chatSecondsWord})',
-      ChatErrorKind.unavailable => AppStrings.chatErrUnavailable,
-      ChatErrorKind.attestation => AppStrings.chatErrAttestation,
-      ChatErrorKind.server => AppStrings.chatErrServer,
-      ChatErrorKind.badResponse => AppStrings.chatErrBadResponse,
-      ChatErrorKind.storage => AppStrings.chatErrStorage,
-    };
-
 class _View extends StatefulWidget {
   const _View();
 
@@ -74,7 +63,16 @@ class _ViewState extends State<_View> {
 
   Future<void> _send() async {
     final cubit = context.read<ConversationCubit>();
+    final notice = context.read<ChatNoticeStore>();
     final text = _controller.text;
+    if (text.trim().isEmpty) return;
+    // The "what is sent" notice comes once, before the first question leaves
+    // the device. Declining sends nothing and keeps the typed text.
+    if (!await notice.accepted()) {
+      if (!mounted) return;
+      if (!await showChatNoticeDialog(context)) return;
+      await notice.accept();
+    }
     final ok = await cubit.send(text);
     // Clear only after success; on failure the typed text stays.
     if (ok && mounted && _controller.text == text) _controller.clear();

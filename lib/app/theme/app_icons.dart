@@ -17,6 +17,7 @@ class AppIcons {
   static const IconData editorial = Iconsax.note_text;
   static const IconData send = Iconsax.send_1;
   static const IconData report = Icons.flag_outlined;
+  static const IconData privacy = Icons.privacy_tip_outlined;
   static const IconData add = Iconsax.add;
   static const IconData play = Iconsax.play;
   static const IconData pause = Iconsax.pause;

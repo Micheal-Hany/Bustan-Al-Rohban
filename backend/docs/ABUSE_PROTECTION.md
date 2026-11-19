@@ -42,11 +42,16 @@ nonce = `base64url(sha256(requestId))` without padding; send the token as
 optional signing-certificate allow-list. Sideloaded or debug builds fail it by design:
 use `test` mode for those environments only.
 
-## Report endpoint (stub)
+## Report endpoint
 
-`POST /v1/reports` validates (strict schema, no conversation history accepted),
-applies the same limits/attestation, returns `202 {reportId, stored:false}` and logs
-only id, reason category and citation count. Storage arrives in Task 12a.
+`POST /v1/reports` (Task 12a) validates a strict schema (no conversation history, no
+unknown fields), applies the same limits and attestation, stores the report and returns
+`202 {reportId, stored:true}`. Stored fields only: id, received time, reason, note,
+answer text, question, cited paragraph ids, content version, provider, model. NOT
+stored: installation id, IP, attestation token, conversation. Without `REPORTS_FILE`
+the endpoint answers 503 `reports_unavailable` and keeps nothing. Storage is an
+append-only JSON-lines file (`npm run reports:list` to read); PostgreSQL (SPEC 12.4)
+can replace it behind the `ReportStore` interface. Retention period: owner decision.
 
 ## Residual risks (owner to accept or fix)
 

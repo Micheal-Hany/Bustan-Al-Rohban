@@ -98,6 +98,14 @@ class _View extends StatelessWidget {
                 key: Key('chat-privacy-note'),
               ),
             ),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: TextButton(
+                key: const Key('chat-privacy-link'),
+                onPressed: () => context.push(AppRoutes.privacy),
+                child: const Text(AppStrings.privacyOpen),
+              ),
+            ),
             Expanded(child: _body(context, state)),
           ]),
         );

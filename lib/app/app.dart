@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../core/content/asset_content_source.dart';
 import '../core/content/content_loader.dart';
 import '../features/ai_chat/domain/chat_api.dart';
+import '../features/ai_chat/domain/chat_notice_store.dart';
 import '../features/ai_chat/domain/chat_store.dart';
 import '../features/ai_chat/domain/client_identity.dart';
 import '../features/ai_chat/domain/report.dart';
@@ -39,6 +40,7 @@ class BustanApp extends StatefulWidget {
     this.installationIds,
     this.attestation,
     this.reportSender,
+    this.chatNoticeStore,
     this.bookmarkStore,
     this.progressStore,
     this.prefsStore,
@@ -55,6 +57,11 @@ class BustanApp extends StatefulWidget {
   final InstallationIdStore? installationIds;
   final AttestationProvider? attestation;
   final ReportSender? reportSender;
+
+  /// Remembers the one-time "what is sent" notice. The default counts the
+  /// notice as already seen so tests need no extra tap; `main.dart` passes
+  /// the real, file-backed store.
+  final ChatNoticeStore? chatNoticeStore;
 
   /// Creates the text-to-speech engine on first use (tests pass a fake).
   final TtsEngine Function()? ttsEngineFactory;
@@ -85,6 +92,8 @@ class _BustanAppState extends State<BustanApp> {
       widget.attestation ?? const NoAttestationProvider();
   late final ReportSender _reportSender =
       widget.reportSender ?? const UnavailableReportSender();
+  late final ChatNoticeStore _chatNotice =
+      widget.chatNoticeStore ?? InMemoryChatNoticeStore(accepted: true);
   late final SpeechCubit _speech =
       SpeechCubit(widget.ttsEngineFactory ?? FlutterTtsEngine.new);
   late final ReadingPrefsCubit _prefs =
@@ -111,6 +120,7 @@ class _BustanAppState extends State<BustanApp> {
         RepositoryProvider<InstallationIdStore>.value(value: _installationIds),
         RepositoryProvider<AttestationProvider>.value(value: _attestation),
         RepositoryProvider<ReportSender>.value(value: _reportSender),
+        RepositoryProvider<ChatNoticeStore>.value(value: _chatNotice),
       ],
       child: MultiBlocProvider(
         providers: [

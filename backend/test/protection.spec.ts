@@ -15,6 +15,7 @@ import {
 } from '../src/protection/attestation';
 import { RateLimiter } from '../src/protection/rate-limiter';
 import { SpendGuard } from '../src/protection/spend-guard';
+import { InMemoryReportStore } from '../src/reports/report.store';
 import { testConfig, testProtection } from './helpers';
 
 const Q = 'ماذا يقول الكتاب عن الصوم والانقطاع عن الطعام؟';
@@ -246,7 +247,7 @@ describe('HTTP protection', () => {
   });
 });
 
-const reportBody = (over: Record<string, unknown> = {}) => ({
+export const reportBody = (over: Record<string, unknown> = {}) => ({
   reason: 'wrong_or_invented',
   note: 'ملاحظة سرية للاختبار',
   answerText: 'نص الإجابة المبلغ عنها',
@@ -256,23 +257,6 @@ const reportBody = (over: Record<string, unknown> = {}) => ({
   provider: 'fake',
   model: 'fake-1',
   ...over,
-});
-
-describe('report endpoint stub', () => {
-  let app: INestApplication;
-  beforeAll(async () => { app = await createApp(testConfig(), false); await app.init(); });
-  afterAll(() => app.close());
-  const http = () => request(app.getHttpServer());
-
-  it('acknowledges a valid report but stores nothing', async () => {
-    const res = await http().post('/v1/reports').send(reportBody()).expect(202);
-    expect(res.body).toEqual({ reportId: expect.any(String), stored: false });
-  });
-  it('rejects extra fields (e.g. conversation history) and bad reasons', async () => {
-    await http().post('/v1/reports').send(reportBody({ messages: [{ role: 'user', text: 'x' }] })).expect(400);
-    await http().post('/v1/reports').send(reportBody({ reason: 'whatever' })).expect(400);
-    await http().post('/v1/reports').send(reportBody({ note: 'x'.repeat(501) })).expect(400);
-  });
 });
 
 describe('privacy-safe logging and no storage', () => {
@@ -286,6 +270,7 @@ describe('privacy-safe logging and no storage', () => {
       testConfig({ protection: testProtection({ ipLimit: { max: 6, windowSeconds: 600 }, attestation: { mode: 'test', testToken: 'TOKEN-SECRET-XYZ', certDigests: [], maxTokenAgeSeconds: 300 } }) }),
       ['log', 'warn', 'error', 'debug', 'verbose'],
       new FakeLlmProvider(),
+      { reportStore: new InMemoryReportStore() },
     );
     await app.init();
     const http = () => request(app.getHttpServer());

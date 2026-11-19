@@ -160,3 +160,8 @@ This creates `lib/features/ai_chat/data/chat_database.g.dart`. Until it exists, 
 
 See `docs/CHAT_CLIENT.md`. Run the backend (`backend/`), then e.g.
 `flutter run --dart-define=CHAT_API_BASE_URL=http://10.0.2.2:3000` on an emulator.
+
+## Privacy and reporting (Task 12a)
+
+`docs/PRIVACY.md` (statements ↔ evidence, crash-reporting decision, owner items),
+`docs/PLAY_DATA_SAFETY.md` (draft Play forms). Reports: `REPORTS_FILE=… npm run reports:list` in `backend/`.

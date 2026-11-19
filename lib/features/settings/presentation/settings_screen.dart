@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../app/router/app_router.dart';
 
 import '../../../app/strings.dart';
 import '../domain/reading_prefs.dart';
@@ -103,6 +106,14 @@ class SettingsScreen extends StatelessWidget {
                 key: const Key('settings-reset-all'),
                 onPressed: prefs == ReadingPrefs.defaults ? null : cubit.resetAll,
                 child: const Text(AppStrings.resetAll),
+              ),
+              const Divider(height: 32),
+              ListTile(
+                key: const Key('settings-privacy'),
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(AppIcons.privacy),
+                title: const Text(AppStrings.privacyOpen),
+                onTap: () => context.push(AppRoutes.privacy),
               ),
             ],
           ),

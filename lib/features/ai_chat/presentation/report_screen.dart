@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../app/strings.dart';
+import '../domain/chat_api.dart';
 import '../domain/report.dart';
+import 'chat_error_text.dart';
 
 String reasonLabel(ReportReason r) => switch (r) {
       ReportReason.wrongOrInvented => AppStrings.reportReasonWrong,
@@ -42,6 +44,7 @@ class _ReportScreenState extends State<ReportScreen> {
   ReportReason? _reason;
   String? _message;
   bool _busy = false;
+  bool _sent = false;
 
   @override
   void dispose() {
@@ -58,6 +61,7 @@ class _ReportScreenState extends State<ReportScreen> {
       _message = null;
     });
     String message;
+    var sent = false;
     try {
       await sender.send(ReportPayload(
         reason: reason,
@@ -70,14 +74,18 @@ class _ReportScreenState extends State<ReportScreen> {
         model: widget.model ?? 'unknown',
       ));
       message = AppStrings.reportSentThanks;
+      sent = true;
     } on ReportUnavailable {
       message = AppStrings.reportUnavailable;
+    } on ChatApiException catch (e) {
+      message = errorText(e.kind, e.retryAfterSeconds);
     } catch (_) {
       message = AppStrings.chatErrServer;
     }
     if (!mounted) return;
     setState(() {
       _busy = false;
+      _sent = sent;
       _message = message;
     });
   }
@@ -134,7 +142,7 @@ class _ReportScreenState extends State<ReportScreen> {
         const SizedBox(height: 8),
         FilledButton(
           key: const Key('report-send'),
-          onPressed: _reason == null || _busy ? null : _send,
+          onPressed: _reason == null || _busy || _sent ? null : _send,
           child: const Text(AppStrings.reportSend),
         ),
         if (_reason == null)

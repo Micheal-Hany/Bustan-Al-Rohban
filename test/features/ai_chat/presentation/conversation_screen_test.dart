@@ -309,6 +309,39 @@ void main() {
   });
 
   group('report this answer', () {
+    Future<void> reach(WidgetTester tester, ReportSender sender) async {
+      await _newConversation(tester, reports: sender);
+      await _ask(tester, 'س');
+      await tester.tap(find.textContaining(AppStrings.chatReportAnswer));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('report-reason-other')));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const Key('report-send')));
+      await tester.tap(find.byKey(const Key('report-send')));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('a network failure is shown and the report can be retried',
+        (tester) async {
+      await reach(
+          tester, _ThrowingSender(const ChatApiException(ChatErrorKind.offline)));
+      expect(find.text(AppStrings.chatErrOffline), findsOneWidget);
+      expect(
+        tester.widget<FilledButton>(find.byKey(const Key('report-send'))).onPressed,
+        isNotNull,
+      );
+    });
+
+    testWidgets('after a successful send the button is disabled (no double '
+        'report)', (tester) async {
+      await reach(tester, _RecordingSender());
+      expect(find.text(AppStrings.reportSentThanks), findsOneWidget);
+      expect(
+        tester.widget<FilledButton>(find.byKey(const Key('report-send'))).onPressed,
+        isNull,
+      );
+    });
+
     testWidgets('the confirmation screen shows exactly what will be sent',
         (tester) async {
       await _newConversation(tester);
@@ -371,6 +404,15 @@ void main() {
       });
     });
   });
+}
+
+class _ThrowingSender implements ReportSender {
+  _ThrowingSender(this.error);
+
+  final Object error;
+
+  @override
+  Future<void> send(ReportPayload payload) async => throw error;
 }
 
 class _RecordingSender implements ReportSender {

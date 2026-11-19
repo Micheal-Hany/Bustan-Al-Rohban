@@ -192,16 +192,19 @@ describe('privacy and statelessness', () => {
     expect(deps).not.toMatch(/typeorm|prisma|sequelize|mongoose|\bpg\b|sqlite|redis|mysql|drizzle|knex/);
   });
 
-  it('source code never writes to disk', () => {
+  it('only the answer-report store writes to disk (chat code never does)', () => {
     const walk = (dir: string): string[] =>
       readdirSync(dir).flatMap((f) => {
         const p = join(dir, f);
         return statSync(p).isDirectory() ? walk(p) : [p];
       });
+    const writers: string[] = [];
     for (const file of walk(join(__dirname, '..', 'src'))) {
       const src = readFileSync(file, 'utf8');
-      expect(src).not.toMatch(/writeFile|appendFile|createWriteStream|\.mkdir/);
+      if (/writeFile|appendFile|createWriteStream|\.mkdir|mkdir\(/.test(src)) writers.push(file.replace(/\\/g, '/'));
     }
+    expect(writers).toHaveLength(1);
+    expect(writers[0]).toMatch(/src\/reports\/report\.store\.ts$/);
   });
 });
 

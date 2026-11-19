@@ -10,6 +10,8 @@ export interface AppConfig {
   protection: ProtectionConfig;
   /** Express "trust proxy" hops so the client IP is read correctly behind a proxy. */
   trustProxy: number;
+  /** Append-only file for answer reports. Unset: report endpoint answers 503. */
+  reportsFile?: string;
 }
 
 export type AttestationMode = 'off' | 'test' | 'play_integrity';
@@ -71,6 +73,7 @@ export function configFromEnv(env: NodeJS.ProcessEnv = process.env): AppConfig {
     pricingFile: env.PRICING_FILE ?? 'config/pricing.json',
     llm: llmConfigFromEnv(env),
     trustProxy: Number(env.TRUST_PROXY_HOPS ?? 0),
+    reportsFile: env.REPORTS_FILE || undefined,
     protection: protectionFromEnv(env),
   };
 }

@@ -3,6 +3,7 @@ import { APP_CONFIG, AppConfig } from './common/config';
 import { RequestLogger } from './common/request-logger';
 import { HealthController } from './health/health.controller';
 import type { AttestationVerifier } from './protection/attestation';
+import { FileReportStore, REPORT_STORE, ReportStore } from './reports/report.store';
 import { ReportsController } from './reports/reports.controller';
 import { ProtectionService } from './protection/protection.service';
 import { SpendGuard } from './protection/spend-guard';
@@ -19,6 +20,7 @@ import { CorpusService } from './sources/corpus.service';
 /** Test seams (never set in production code). */
 export interface AppDeps {
   attestation?: AttestationVerifier;
+  reportStore?: ReportStore;
 }
 
 @Module({})
@@ -33,6 +35,10 @@ export class AppModule {
         RetrievalService,
         ChatService,
         ProtectionService,
+        {
+          provide: REPORT_STORE,
+          useValue: deps.reportStore ?? (config.reportsFile ? new FileReportStore(config.reportsFile) : null),
+        },
         { provide: SpendGuard, useValue: new SpendGuard(config.protection) },
         { provide: ATTESTATION, useValue: deps.attestation ?? createAttestationVerifier(config.protection.attestation) },
         { provide: LLM_PROVIDER, useValue: llm ?? createProvider(config.llm) },

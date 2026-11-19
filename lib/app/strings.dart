@@ -138,6 +138,22 @@ class AppStrings {
   static const chatEmptyConversation = 'لا توجد رسائل في هذه المحادثة';
   static const chatSend = 'إرسال';
 
+  // Privacy (Task 12a)
+  static const privacyTitle = 'الخصوصية والبيانات';
+  static const privacyIntro =
+      'هذه الصفحة تشرح بالتفصيل ما يُحفظ على جهازك، وما يُرسل عند استخدام '
+      'المساعد، وما لا نفعله.';
+  static const privacyContactLabel = 'للتواصل بشأن الخصوصية';
+  static const privacyOpen = 'الخصوصية والبيانات';
+  static const chatNoticeTitle = 'قبل إرسال أول سؤال';
+  static const chatNoticeBody =
+      'عند الإرسال يُرسل سؤالك وبعض رسائل المحادثة الأخيرة إلى خادم التطبيق، '
+      'ثم إلى مزوّد ذكاء اصطناعي لصياغة الإجابة من نص الكتاب. لا يحفظ الخادم '
+      'محادثاتك، ويبقى سجلّك على جهازك فقط. لا تكتب معلومات شخصية أو '
+      'اعترافات في الأسئلة.';
+  static const chatNoticeReadMore = 'قراءة الخصوصية كاملة';
+  static const chatNoticeAccept = 'موافق، تابع';
+
   // AI chat (Task 11)
   static const chatBookOnly = 'إجابات من كتاب بستان الرهبان فقط';
   static const chatScopeLabel = 'النطاق';
@@ -188,7 +204,7 @@ class AppStrings {
   static const reportUnknown = 'غير معروف';
   static const reportSend = 'إرسال البلاغ';
   static const reportUnavailable =
-      'الإبلاغ غير مُفعَّل بعد في هذا الإصدار، ولم يُرسل شيء.';
+      'الإبلاغ غير متاح الآن، ولم يُرسل شيء. حاول لاحقًا.';
   static const reportSentThanks = 'شكرًا. وصل بلاغك.';
   static const reportReasonWrong = 'معلومة خاطئة أو مختلقة';
   static const reportReasonNotBook = 'ليست من الكتاب';

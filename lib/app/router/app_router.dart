@@ -14,6 +14,7 @@ import '../../features/library/presentation/saint_sections_screen.dart';
 import '../../features/library/presentation/saints_list_screen.dart';
 import '../../features/reader/presentation/reader_screen.dart';
 import '../../features/search/presentation/search_screen.dart';
+import '../../features/privacy/presentation/privacy_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 
 /// Route paths. Real screens replace placeholders in later tasks.
@@ -28,6 +29,7 @@ class AppRoutes {
   static const bookmarks = '/bookmarks';
   static const chat = '/chat';
   static const settings = '/settings';
+  static const privacy = '/privacy';
   static const contentPreview = '/content-preview';
   static const ttsSpike = '/spikes/tts';
 
@@ -57,6 +59,7 @@ class AppRoutes {
     bookmarks,
     chat,
     settings,
+    privacy,
     contentPreview,
     ttsSpike,
   ];
@@ -132,6 +135,10 @@ GoRouter createRouter() {
       GoRoute(
         path: AppRoutes.ttsSpike,
         builder: (context, state) => const TtsSpikeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.privacy,
+        builder: (context, state) => const PrivacyScreen(),
       ),
       GoRoute(
         path: AppRoutes.settings,
