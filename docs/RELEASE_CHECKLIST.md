@@ -43,7 +43,10 @@ the font files.
 2. **Signing key.** `android/app/build.gradle.kts` now reads `android/key.properties`
    (git-ignored: `storeFile`, `storePassword`, `keyAlias`, `keyPassword`). Without it the build is
    signed with the debug key and prints a warning. Owner creates and safely backs up the upload key.
-3. **FAKE content ships in the asset list** until Task 13 (by design). Do not publish before it.
+3. **FAKE content.** A release build now refuses to open FAKE content. To test a release APK before
+   Task 13 build with `flutter build apk --release --dart-define=ALLOW_FIXTURE_IN_RELEASE=true`;
+   the final store build must not use the flag. Run `tool/release_content_check.dart`
+   (see `docs/CONTENT_IMPORT.md`) before publishing.
 4. **Play Integrity client** is not in the app (backend verification is mocked-only); production
    chat needs it (see `docs/CHAT_CLIENT.md`).
 5. App name in the launcher is now `بستان الرهبان`; confirm.

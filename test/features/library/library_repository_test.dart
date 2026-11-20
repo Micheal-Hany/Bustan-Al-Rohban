@@ -1,4 +1,6 @@
 import 'package:bustan_al_rohban/core/content/content_issue.dart';
+import 'package:bustan_al_rohban/core/content/content_loader.dart';
+import 'package:bustan_al_rohban/core/content/fixture_gate.dart';
 import 'package:bustan_al_rohban/features/library/data/library_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -77,6 +79,52 @@ void main() {
         repo.saint('saint-a'),
         throwsA(isA<ContentValidationException>()),
       );
+    });
+
+    group('FAKE content gate', () {
+      TestBook fakeBook() => buildBook([
+            saintJson(sections: [
+              sectionJson(paragraphs: [paraJson()])
+            ]),
+          ], fixture: true);
+
+      LibraryRepository repo({required bool allow}) => LibraryRepository(
+            ContentLoader(probeFor(fakeBook())),
+            allowFixture: allow,
+          );
+
+      test('release rule: allowed only with the explicit override', () {
+        expect(fixtureAllowed(release: false, override: false), isTrue);
+        expect(fixtureAllowed(release: true, override: false), isFalse);
+        expect(fixtureAllowed(release: true, override: true), isTrue);
+      });
+
+      test('FAKE content is shown when allowed', () async {
+        expect((await repo(allow: true).saints()), hasLength(1));
+      });
+
+      test('FAKE content is refused when not allowed, and retried', () async {
+        final r = repo(allow: false);
+        for (var i = 0; i < 2; i++) {
+          await expectLater(
+            r.saints(),
+            throwsA(isA<ContentValidationException>().having(
+              (e) => e.report.errors.single.code,
+              'code',
+              'fixture-in-release',
+            )),
+          );
+        }
+      });
+
+      test('real (non-fixture) content passes even when FAKE is not allowed',
+          () async {
+        final r = LibraryRepository(
+          ContentLoader(probeFor(twoSaintBook())),
+          allowFixture: false,
+        );
+        expect(await r.saints(), hasLength(2));
+      });
     });
   });
 }

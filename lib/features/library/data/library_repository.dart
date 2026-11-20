@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 
 import '../../../core/content/content_issue.dart';
 import '../../../core/content/content_models.dart';
+import '../../../core/content/fixture_gate.dart';
 import '../../insights/domain/insight.dart';
 
 class SaintNotFoundException implements Exception {
@@ -32,11 +33,23 @@ class ParagraphLocation {
 /// really retries.
 class LibraryRepository {
   /// [showUnapproved] shows draft insights (debug builds only by default).
-  LibraryRepository(this._loader, {bool? showUnapproved})
-      : showUnapproved = showUnapproved ?? !kReleaseMode;
+  ///
+  /// [allowFixture] says whether FAKE content may be shown. By default it is
+  /// allowed except in release builds (see `fixture_gate.dart`).
+  LibraryRepository(
+    this._loader, {
+    bool? showUnapproved,
+    bool? allowFixture,
+  })  : showUnapproved = showUnapproved ?? !kReleaseMode,
+        _allowFixture = allowFixture ??
+            fixtureAllowed(
+              release: kReleaseMode,
+              override: allowFixtureInReleaseFlag,
+            );
 
   final ContentLoader _loader;
   final bool showUnapproved;
+  final bool _allowFixture;
   final Map<String, InsightParseResult> _insightCache = {};
 
   /// Problems found in insight files (for the owner; never shown to readers).
@@ -44,8 +57,13 @@ class LibraryRepository {
   ContentManifest? _manifestCache;
   final Map<String, Saint> _saintCache = {};
 
-  Future<ContentManifest> manifest() async =>
-      _manifestCache ??= await _loader.loadManifest();
+  Future<ContentManifest> manifest() async {
+    final cached = _manifestCache;
+    if (cached != null) return cached;
+    final loaded = await _loader.loadManifest();
+    enforceFixtureGate(loaded, allowed: _allowFixture);
+    return _manifestCache = loaded;
+  }
 
   /// Saints in book order.
   Future<List<SaintEntry>> saints() async {
