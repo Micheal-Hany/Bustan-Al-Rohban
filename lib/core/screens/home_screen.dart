@@ -170,11 +170,12 @@ class _FeatureTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = BustanColors.of(context);
     return Material(
-      color: Colors.white,
+      color: colors.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(22),
-        side: const BorderSide(color: AppTheme.goldSoft),
+        side: BorderSide(color: colors.border),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(22),
@@ -184,11 +185,11 @@ class _FeatureTile extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: const BoxDecoration(
-                color: AppTheme.parchmentDeep,
+              decoration: BoxDecoration(
+                color: colors.quoteSurface,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: AppTheme.brown, size: 28),
+              child: Icon(icon, color: colors.accent, size: 28),
             ),
             const SizedBox(height: 10),
             Text(
@@ -196,7 +197,7 @@ class _FeatureTile extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
-                  ?.copyWith(color: AppTheme.brown),
+                  ?.copyWith(color: colors.accent),
             ),
           ],
         ),

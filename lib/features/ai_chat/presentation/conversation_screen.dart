@@ -348,8 +348,8 @@ class _AssistantBubble extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         constraints: const BoxConstraints(maxWidth: 560),
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: AppTheme.goldSoft),
+          color: BustanColors.of(context).card,
+          border: Border.all(color: BustanColors.of(context).border),
           borderRadius: BorderRadius.circular(16),
         ),
         child: switch (reply) {
@@ -443,10 +443,10 @@ class _Block extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: quote ? AppTheme.parchmentDeep : null,
+        color: quote ? BustanColors.of(context).quoteSurface : null,
         border: BorderDirectional(
           start: BorderSide(
-            color: quote ? AppTheme.gold : scheme.outlineVariant,
+            color: quote ? BustanColors.of(context).accent : scheme.outlineVariant,
             width: 3,
           ),
         ),

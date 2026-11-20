@@ -378,7 +378,7 @@ class _ParagraphView extends StatelessWidget {
           scale,
       height: lineHeight,
       fontFamily: AppTheme.bookFontFamily,
-      color: AppTheme.ink,
+      color: BustanColors.of(context).ink,
       fontWeight: heading ? FontWeight.bold : null,
     );
     return Padding(
@@ -390,7 +390,7 @@ class _ParagraphView extends StatelessWidget {
         builder: (context, speaking) => DecoratedBox(
           key: speaking ? Key('para-speaking-${paragraph.id}') : null,
           decoration: BoxDecoration(
-            color: speaking ? AppTheme.goldSoft : null,
+            color: speaking ? BustanColors.of(context).highlight : null,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

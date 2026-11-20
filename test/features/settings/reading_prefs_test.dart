@@ -80,4 +80,21 @@ void main() {
       expect(parseReadingPrefs(textScale: 'Infinity').textScale, 1.0);
     });
   });
+
+  group('theme preference', () {
+    test('defaults to system; unknown stored value falls back to system', () {
+      expect(ReadingPrefs.defaults.themePreference, ThemePreference.system);
+      expect(parseReadingPrefs(themePreference: 'neon').themePreference,
+          ThemePreference.system);
+      expect(parseReadingPrefs(themePreference: 'dark').themePreference,
+          ThemePreference.dark);
+    });
+
+    test('is part of equality and readingIsDefault ignores it', () {
+      const dark = ReadingPrefs(themePreference: ThemePreference.dark);
+      expect(dark == ReadingPrefs.defaults, isFalse);
+      expect(dark.readingIsDefault, isTrue);
+      expect(const ReadingPrefs(textScale: 1.3).readingIsDefault, isFalse);
+    });
+  });
 }

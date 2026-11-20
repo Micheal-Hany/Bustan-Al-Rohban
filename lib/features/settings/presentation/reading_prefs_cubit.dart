@@ -67,10 +67,15 @@ class ReadingPrefsCubit extends Cubit<ReadingPrefsState> {
   Future<void> setLineSpacing(LineSpacing value) =>
       _update(prefs.copyWith(lineSpacing: value));
 
+  Future<void> setThemePreference(ThemePreference value) =>
+      _update(prefs.copyWith(themePreference: value));
+
   Future<void> resetTextScale() =>
       setTextScale(ReadingPrefs.defaultTextScale);
 
-  Future<void> resetAll() => _update(ReadingPrefs.defaults);
+  /// Resets size and spacing; the appearance choice is kept.
+  Future<void> resetAll() => _update(
+      ReadingPrefs.defaults.copyWith(themePreference: prefs.themePreference));
 
   Future<void> _update(ReadingPrefs next) {
     _changedByUser = true;

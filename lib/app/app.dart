@@ -129,10 +129,19 @@ class _BustanAppState extends State<BustanApp> {
           BlocProvider<ReadingPrefsCubit>.value(value: _prefs),
           BlocProvider<SpeechCubit>.value(value: _speech),
         ],
-        child: MaterialApp.router(
+        child: BlocBuilder<ReadingPrefsCubit, ReadingPrefsState>(
+          buildWhen: (a, b) =>
+              a.prefs.themePreference != b.prefs.themePreference,
+          builder: (context, prefsState) => MaterialApp.router(
           title: AppStrings.appTitle,
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light(),
+          darkTheme: AppTheme.dark(),
+          themeMode: switch (prefsState.prefs.themePreference) {
+            ThemePreference.system => ThemeMode.system,
+            ThemePreference.light => ThemeMode.light,
+            ThemePreference.dark => ThemeMode.dark,
+          },
           locale: const Locale('ar'),
           supportedLocales: const [Locale('ar')],
           localizationsDelegates: const [
@@ -141,6 +150,7 @@ class _BustanAppState extends State<BustanApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           routerConfig: _router,
+        ),
         ),
       ),
     );

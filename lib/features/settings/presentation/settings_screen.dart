@@ -9,7 +9,7 @@ import '../domain/reading_prefs.dart';
 import 'reading_prefs_cubit.dart';
 import '../../../app/theme/app_icons.dart';
 
-/// Settings. Version 1 has reading preferences; dark mode comes in Task 12b.
+/// Settings: reading preferences, appearance (light/dark) and privacy.
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -17,6 +17,12 @@ class SettingsScreen extends StatelessWidget {
     LineSpacing.compact: AppStrings.lineSpacingCompact,
     LineSpacing.normal: AppStrings.lineSpacingNormal,
     LineSpacing.relaxed: AppStrings.lineSpacingRelaxed,
+  };
+
+  static const _themeLabels = {
+    ThemePreference.system: AppStrings.themeSystem,
+    ThemePreference.light: AppStrings.themeLight,
+    ThemePreference.dark: AppStrings.themeDark,
   };
 
   @override
@@ -104,9 +110,22 @@ class SettingsScreen extends StatelessWidget {
               const SizedBox(height: 24),
               OutlinedButton(
                 key: const Key('settings-reset-all'),
-                onPressed: prefs == ReadingPrefs.defaults ? null : cubit.resetAll,
+                onPressed: prefs.readingIsDefault ? null : cubit.resetAll,
                 child: const Text(AppStrings.resetAll),
               ),
+              const Divider(height: 32),
+              Text(AppStrings.appearanceSection,
+                  style: theme.textTheme.titleMedium),
+              const SizedBox(height: 12),
+              Wrap(spacing: 8, children: [
+                for (final t in ThemePreference.values)
+                  ChoiceChip(
+                    key: Key('settings-theme-${t.name}'),
+                    label: Text(_themeLabels[t]!),
+                    selected: prefs.themePreference == t,
+                    onSelected: (_) => cubit.setThemePreference(t),
+                  ),
+              ]),
               const Divider(height: 32),
               ListTile(
                 key: const Key('settings-privacy'),

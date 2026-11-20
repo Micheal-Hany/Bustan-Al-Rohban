@@ -39,6 +39,14 @@ void runPrefsStoreContract(
       expect(p.lineSpacing, LineSpacing.compact);
     });
 
+    test('theme preference defaults to system and round-trips', () async {
+      expect((await store.load()).themePreference, ThemePreference.system);
+      for (final t in ThemePreference.values) {
+        await store.save(ReadingPrefs(themePreference: t));
+        expect((await store.load()).themePreference, t);
+      }
+    });
+
     test('every step and every spacing round-trips', () async {
       for (final scale in ReadingPrefs.textScaleSteps) {
         for (final spacing in LineSpacing.values) {

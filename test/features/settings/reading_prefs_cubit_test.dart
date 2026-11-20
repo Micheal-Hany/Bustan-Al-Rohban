@@ -180,5 +180,27 @@ void main() {
       store.loadGate!.complete();
       await f;
     });
+
+    test('setThemePreference applies and is saved', () async {
+      final store = InMemoryPrefsStore();
+      final c = ReadingPrefsCubit(store);
+      await c.setThemePreference(ThemePreference.dark);
+      expect(c.prefs.themePreference, ThemePreference.dark);
+      expect((await store.load()).themePreference, ThemePreference.dark);
+      await c.close();
+    });
+
+    test('resetAll resets reading settings but keeps the appearance',
+        () async {
+      final c = ReadingPrefsCubit(InMemoryPrefsStore());
+      await c.setThemePreference(ThemePreference.dark);
+      await c.setTextScale(1.5);
+      await c.setLineSpacing(LineSpacing.relaxed);
+      await c.resetAll();
+      expect(c.prefs.textScale, ReadingPrefs.defaultTextScale);
+      expect(c.prefs.lineSpacing, LineSpacing.normal);
+      expect(c.prefs.themePreference, ThemePreference.dark);
+      await c.close();
+    });
   });
 }

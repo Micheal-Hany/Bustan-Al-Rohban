@@ -14,6 +14,7 @@ class DriftPrefsStore implements PrefsStore {
     return parseReadingPrefs(
       textScale: values[PrefsKeys.textScale],
       lineSpacing: values[PrefsKeys.lineSpacing],
+      themePreference: values[PrefsKeys.themePreference],
     );
   }
 
@@ -26,6 +27,7 @@ class DriftPrefsStore implements PrefsStore {
               );
       await put(PrefsKeys.textScale, prefs.textScale.toString());
       await put(PrefsKeys.lineSpacing, prefs.lineSpacing.name);
+      await put(PrefsKeys.themePreference, prefs.themePreference.name);
     });
   }
 }

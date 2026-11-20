@@ -37,6 +37,10 @@ class AppStrings {
   static const aliasesLabel = 'أسماء أخرى';
   // Settings (Task 6)
   static const readingSection = 'القراءة';
+  static const appearanceSection = 'المظهر';
+  static const themeSystem = 'حسب الجهاز';
+  static const themeLight = 'فاتح';
+  static const themeDark = 'داكن';
   static const fontSizeLabel = 'حجم الخط';
   static const lineSpacingLabel = 'تباعد الأسطر';
   static const lineSpacingCompact = 'متقارب';
