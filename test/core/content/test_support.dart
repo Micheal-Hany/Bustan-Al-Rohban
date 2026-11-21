@@ -32,6 +32,18 @@ class DiskContentSource implements ContentSource {
       File('$root/$relativePath').readAsString();
 }
 
+/// Like [DiskContentSource] but reads synchronously, so it also works inside
+/// testWidgets (real async file IO never completes under FakeAsync).
+class SyncDiskContentSource implements ContentSource {
+  SyncDiskContentSource(this.root);
+
+  final String root;
+
+  @override
+  Future<String> readString(String relativePath) =>
+      Future.value(File('$root/$relativePath').readAsStringSync());
+}
+
 Map<String, dynamic> paraJson({
   String id = 'p-000001',
   int order = 1,

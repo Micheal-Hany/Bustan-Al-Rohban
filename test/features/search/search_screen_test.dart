@@ -1,5 +1,7 @@
 import 'package:bustan_al_rohban/app/app.dart';
 import 'package:bustan_al_rohban/app/strings.dart';
+import 'package:bustan_al_rohban/core/content/content_loader.dart';
+import 'package:bustan_al_rohban/features/library/data/library_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -171,7 +173,10 @@ void main() {
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      await tester.pumpWidget(const BustanApp());
+      await tester.pumpWidget(BustanApp(
+          libraryRepository: LibraryRepository(
+          ContentLoader(SyncDiskContentSource('test/fixtures/fake_content'))),
+      ));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('nav-search')));
       await tester.pumpAndSettle();

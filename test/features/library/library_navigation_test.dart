@@ -1,5 +1,7 @@
 import 'package:bustan_al_rohban/app/app.dart';
 import 'package:bustan_al_rohban/app/strings.dart';
+import 'package:bustan_al_rohban/core/content/content_loader.dart';
+import 'package:bustan_al_rohban/features/library/data/library_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -180,7 +182,10 @@ void main() {
 
   group('Shipped FAKE content', () {
     testWidgets('default app reads the bundled assets', (tester) async {
-      await tester.pumpWidget(const BustanApp());
+      await tester.pumpWidget(BustanApp(
+          libraryRepository: LibraryRepository(
+          ContentLoader(SyncDiskContentSource('test/fixtures/fake_content'))),
+      ));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('nav-library')));
       await tester.pumpAndSettle();
