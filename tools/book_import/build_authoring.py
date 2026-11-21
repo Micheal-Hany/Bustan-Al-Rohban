@@ -145,6 +145,25 @@ def is_paren_heading(line):
     return line == line.lstrip() and len(s) <= 70 and s.endswith(':') and bool(PAREN_ITEM.match(s))
 
 
+TOC_TITLES = set()
+
+
+def norm_title(t):
+    t = t.replace('\u06cc', '\u064a').replace('\u0649', '\u064a')
+    t = re.sub('[\u064b-\u0652\u0640]', '', t)
+    t = re.sub('[أإآ]', 'ا', t)
+    return re.sub(r'[\s:.\-]+', ' ', t).strip()
+
+
+def collect_toc_titles(raw_lines):
+    """Topic titles listed in the book's numbered tables of contents
+    ("-1 روح الصلاة:"); the same text later on its own line is a heading."""
+    for l in raw_lines:
+        m = NUM_ITEM.match(l.strip())
+        if m and 2 <= len(m.group(2).strip()) <= 40:
+            TOC_TITLES.add(norm_title(m.group(2)))
+
+
 def block_paragraphs(lines, stats):
     """lines (already char-fixed) -> list of dicts {kind, text, indent}
 
@@ -208,6 +227,15 @@ def block_paragraphs(lines, stats):
                 out.append({'kind': 'section', 'text': title, 'indent': True})
                 i += 1
                 continue
+        if (line == line.lstrip() and len(s) <= 45 and not NUM_ITEM.match(s)
+                and norm_title(s) in TOC_TITLES
+                and (i == 0 or not lines[i - 1].strip()
+                     or re.fullmatch(r'\d{1,3}', lines[i - 1].strip()))):
+            flush()
+            out.append({'kind': 'section', 'text': s.rstrip(':').strip(), 'indent': True})
+            stats.counts['toc-title-headings'] += 1
+            i += 1
+            continue
         if is_colon_heading(line) and prev_ends_sentence(lines, i):
             flush()
             out.append({'kind': 'section', 'text': s.rstrip(':').strip(), 'indent': True})
@@ -365,6 +393,7 @@ def main():
 
     stats = Stats()
     raw_lines = clean_lines(Path(a.raw).read_text(encoding='utf-8'))
+    collect_toc_titles(raw_lines)
     # verification of the structure table against the raw text
     for uid, slug, title, start, must, _ in UNITS:
         line = raw_lines[start - 1].replace('\u06cc', '\u064a')

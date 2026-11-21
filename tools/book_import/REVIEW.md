@@ -9,8 +9,9 @@ rejoining hard-wrapped lines into paragraphs. Please review the kaf list.
 - alef-alef-lam-lam-ha->allah: 1295
 - tanwin-moved-before-punctuation: 1434
 - leading-dot-moved-to-previous-line: 37
-- page-break-paragraphs-rejoined: 213
+- page-break-paragraphs-rejoined: 210
 - numbered-lists: 8
+- toc-title-headings: 24
 - kaf `same`: 778 occurrences, 137 distinct words
 - kaf `hand`: 78 occurrences, 15 distinct words
 - kaf `fixed`: 5644 occurrences, 582 distinct words
@@ -46,10 +47,10 @@ rejoining hard-wrapped lines into paragraphs. Please review the kaf list.
 | 021-daniel-scete.txt | saint-daniel-scete | القديس أنبا دانيال الاسقيطي | 6 | 50 |
 | 022-yusab-hermit.txt | saint-yusab-hermit | الأنبا يوساب السائح | 1 | 13 |
 | 023-macarius-scribe.txt | saint-macarius-scribe | مقاره الكاتب وبعض السواح | 1 | 25 |
-| 024-teachings-1.txt | teachings-1 | تدبير البداية | 96 | 362 |
+| 024-teachings-1.txt | teachings-1 | تدبير البداية | 97 | 361 |
 | 025-teachings-2.txt | teachings-2 | تدبير الإرادة | 29 | 778 |
-| 026-teachings-3.txt | teachings-3 | تدبير الروح | 8 | 1788 |
-| 027-teachings-4.txt | teachings-4 | تدبير الفكر | 11 | 301 |
+| 026-teachings-3.txt | teachings-3 | تدبير الروح | 28 | 1789 |
+| 027-teachings-4.txt | teachings-4 | تدبير الفكر | 12 | 301 |
 | 028-teachings-5.txt | teachings-5 | تدبير المحبة | 22 | 372 |
 
 ## kaf: review (324 words)
