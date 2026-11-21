@@ -10,8 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_support.dart';
 
 void main() {
-  group('shipped FAKE fixture (assets/content)', () {
-    final source = DiskContentSource('assets/content');
+  group('FAKE test fixture (test/fixtures/fake_content)', () {
+    final source = DiskContentSource('test/fixtures/fake_content');
 
     test('loads, validates, and is clearly labeled FAKE', () async {
       final loaded = await ContentLoader(source).loadBook();
@@ -63,8 +63,8 @@ void main() {
   });
 
   group('authoring sources match the shipped JSON', () {
-    test('content_src/fake converts to exactly the committed assets', () {
-      final dir = Directory('content_src/fake');
+    test('test/fixtures/fake_src converts to exactly the fixture assets', () {
+      final dir = Directory('test/fixtures/fake_src');
       final saintTexts = <String, String>{};
       for (final f in dir.listSync().whereType<File>()) {
         final name = f.uri.pathSegments.last;
@@ -73,11 +73,11 @@ void main() {
         }
       }
       final registry = IdRegistry.fromJson(jsonDecode(
-              File('content_src/fake/id-registry.json').readAsStringSync())
+              File('test/fixtures/fake_src/id-registry.json').readAsStringSync())
           as Map<String, dynamic>);
 
       final result = const AuthoringConverter().convertBook(
-        bookText: File('content_src/fake/book.txt').readAsStringSync(),
+        bookText: File('test/fixtures/fake_src/book.txt').readAsStringSync(),
         saintTexts: saintTexts,
         registry: registry,
       );
@@ -86,16 +86,31 @@ void main() {
           isNot(contains('paragraph-retired')));
 
       final shippedManifest = jsonDecode(
-              File('assets/content/manifest.json').readAsStringSync())
+              File('test/fixtures/fake_content/manifest.json').readAsStringSync())
           as Map<String, dynamic>;
       expect(jsonDecode(jsonEncode(result.manifest)), shippedManifest);
 
       for (final entry in result.saintFiles.entries) {
         final shipped =
-            jsonDecode(File('assets/content/${entry.key}').readAsStringSync());
+            jsonDecode(File('test/fixtures/fake_content/${entry.key}').readAsStringSync());
         expect(jsonDecode(jsonEncode(entry.value)), shipped,
             reason: entry.key);
       }
+    });
+  });
+
+  group('shipped content (assets/content)', () {
+    final manifest = File('assets/content/manifest.json');
+
+    test('when present, loads in release mode (no FAKE content)', () async {
+      if (!manifest.existsSync()) {
+        markTestSkipped('assets/content is empty: copy build/real_content');
+        return;
+      }
+      final loaded = await ContentLoader(DiskContentSource('assets/content'))
+          .loadBook(allowFixture: false);
+      expect(loaded.book.manifest.fixture, isFalse);
+      expect(loaded.book.saints, isNotEmpty);
     });
   });
 

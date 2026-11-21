@@ -66,11 +66,11 @@ void main() {
   });
 
   test('the shipped FAKE insights file is valid against its saint', () async {
-    final loader = ContentLoader(DiskContentSource('assets/content'));
+    final loader = ContentLoader(DiskContentSource('test/fixtures/fake_content'));
     final repo = LibraryRepository(loader, showUnapproved: true);
     final saint = await repo.saint('saint-fake-one');
     final text =
-        File('assets/content/insights/saint-fake-one.insights.json')
+        File('test/fixtures/fake_content/insights/saint-fake-one.insights.json')
             .readAsStringSync();
     final r = parseInsights(text, saint);
     expect(r.issues, isEmpty);
