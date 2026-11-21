@@ -19,3 +19,7 @@ node_modules/
 .env
 backend/dist/
 build/apk_scan/
+
+# Real book text is owner-private; never commit (repo is public)
+content_src/real/
+__pycache__/
