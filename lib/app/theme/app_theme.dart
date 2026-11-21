@@ -31,7 +31,7 @@ class BustanColors extends ThemeExtension<BustanColors> {
   final Color highlight;
 
   static const light = BustanColors(
-    card: Colors.white,
+    card: Color(0xFFFFFCF5),
     border: AppTheme.goldSoft,
     quoteSurface: AppTheme.parchmentDeep,
     ink: AppTheme.ink,
@@ -40,12 +40,12 @@ class BustanColors extends ThemeExtension<BustanColors> {
   );
 
   static const dark = BustanColors(
-    card: Color(0xFF2A211A),
-    border: Color(0x59D9B77A),
-    quoteSurface: Color(0xFF3A2E24),
-    ink: Color(0xFFF0E6D4),
-    accent: Color(0xFFD9B77A),
-    highlight: Color(0x66D9B77A),
+    card: Color(0xFF1A1613),
+    border: Color(0x66E2B965),
+    quoteSurface: Color(0xFF2A2119),
+    ink: Color(0xFFF3E9D6),
+    accent: Color(0xFFE2B965),
+    highlight: Color(0x66E2B965),
   );
 
   static BustanColors of(BuildContext context) =>
@@ -95,13 +95,18 @@ class AppTheme {
 
   static const brown = Color(0xFF5B3A29);
   static const gold = Color(0xFFB8893B);
-  static const parchment = Color(0xFFFAF4E8);
-  static const parchmentDeep = Color(0xFFF1E6D0);
+  static const parchment = Color(0xFFFBF5E9);
+  static const parchmentDeep = Color(0xFFF3E6C8);
   static const ink = Color(0xFF2B1D14);
   static const goldSoft = Color(0x59B8893B); // gold @ 35%
   static const goldMid = Color(0x80B8893B); // gold @ 50%
 
-  static const darkSurface = Color(0xFF1B1511);
+  static const darkSurface = Color(0xFF0E0C0A);
+
+  /// Home banner gradients (white / gold text on top of them).
+  static const heroLight = [Color(0xFF664029), brown, Color(0xFF3E2619)];
+  static const heroDark = [Color(0xFF2A2119), Color(0xFF16120E), Color(0xFF0A0807)];
+  static const goldBright = Color(0xFFE2B965);
 
   static ThemeData light() {
     final scheme = ColorScheme.fromSeed(
@@ -129,15 +134,15 @@ class AppTheme {
     ).copyWith(
       primary: colors.accent,
       onPrimary: ink,
-      secondary: gold,
+      secondary: goldBright,
       surface: darkSurface,
       onSurface: colors.ink,
       surfaceContainerHighest: colors.quoteSurface,
       tertiaryContainer: const Color(0xFF4A3A1C),
       onTertiaryContainer: const Color(0xFFF6E7C1),
       tertiary: colors.accent,
-      outline: const Color(0xFF9C8A72),
-      outlineVariant: const Color(0xFF4F4235),
+      outline: const Color(0xFFA8957A),
+      outlineVariant: const Color(0xFF3D3228),
     );
     return _build(scheme, colors);
   }
@@ -159,7 +164,7 @@ class AppTheme {
       bodyColor: ink,
       displayColor: ink,
     );
-    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(18));
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(24));
     return base.copyWith(
       scaffoldBackgroundColor: surface,
       textTheme: text.copyWith(
@@ -227,6 +232,24 @@ class AppTheme {
           color: isLight ? Colors.white : ink,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: colors.card,
+        indicatorColor: colors.quoteSurface,
+        surfaceTintColor: Colors.transparent,
+        labelTextStyle: WidgetStatePropertyAll(TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: accent,
+        )),
+        iconTheme: WidgetStatePropertyAll(IconThemeData(color: accent)),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: colors.card,
+        side: BorderSide(color: softBorder),
+        labelStyle: TextStyle(fontFamily: fontFamily, color: ink),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       dividerTheme: DividerThemeData(color: softBorder),
     );

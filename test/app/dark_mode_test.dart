@@ -50,10 +50,14 @@ void main() {
       });
     }
 
-    test('hero banner text (white on the brown gradient) is readable', () {
-      for (final stop in [const Color(0xFF7A4B32), AppTheme.brown]) {
+    test('hero banner text is readable on its gradients', () {
+      for (final stop in [...AppTheme.heroLight, ...AppTheme.heroDark]) {
         expect(contrastRatio(Colors.white, stop), greaterThanOrEqualTo(_aa));
+        expect(contrastRatio(AppTheme.goldBright, stop),
+            greaterThanOrEqualTo(_aa));
       }
+      expect(contrastRatio(AppTheme.ink, AppTheme.goldBright),
+          greaterThanOrEqualTo(_aa));
     });
   });
 

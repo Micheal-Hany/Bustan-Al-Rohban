@@ -5,6 +5,8 @@ class AppStrings {
 
   static const appTitle = 'بستان الرهبان';
   static const homeSubtitle = 'قراءة ودراسة كتاب بستان الرهبان';
+  static const homeTagline = 'قراءة وروحانية .. لحياة أعمق';
+  static const startNow = 'ابدأ الآن';
   static const library = 'المكتبة';
   static const search = 'البحث';
   static const bookmarks = 'العلامات المرجعية';

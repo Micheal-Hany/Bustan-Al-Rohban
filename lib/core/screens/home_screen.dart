@@ -107,53 +107,123 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: const LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [Color(0xFF7A4B32), AppTheme.brown, Color(0xFF3E2619)],
+        borderRadius: BorderRadius.circular(32),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: dark ? AppTheme.heroDark : AppTheme.heroLight,
         ),
-        boxShadow: const [
+        border: dark
+            ? Border.all(color: const Color(0x66E2B965))
+            : null,
+        boxShadow: [
           BoxShadow(
-            color: Color(0x4D5B3A29),
-            blurRadius: 18,
-            offset: Offset(0, 8),
+            color: dark ? const Color(0x33E2B965) : const Color(0x4D5B3A29),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
-      child: const Column(
+      child: Stack(
         children: [
-          Icon(AppIcons.library, color: AppTheme.gold, size: 40),
-          SizedBox(height: 12),
-          Text(
-            AppStrings.appTitle,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: AppTheme.bookFontFamily,
-              fontSize: 38,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              height: 1.4,
+          const Positioned.fill(
+            child: ExcludeSemantics(
+              child: CustomPaint(painter: _SanctuaryPainter()),
             ),
           ),
-          SizedBox(height: 8),
-          Text(
-            AppStrings.homeSubtitle,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: AppTheme.fontFamily,
-              fontSize: 15,
-              color: Color(0xD9FFFFFF),
-              height: 1.7,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 150, 24, 28),
+            child: Column(
+              children: [
+                const Text(
+                  AppStrings.appTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: AppTheme.bookFontFamily,
+                    fontSize: 42,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.goldBright,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  AppStrings.homeTagline,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    fontSize: 15,
+                    color: Colors.white,
+                    height: 1.7,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                FilledButton(
+                  key: const Key('hero-start'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppTheme.goldBright,
+                    foregroundColor: AppTheme.ink,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 44, vertical: 14),
+                    textStyle: const TextStyle(
+                      fontFamily: AppTheme.fontFamily,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  onPressed: () => context.push(AppRoutes.library),
+                  child: const Text(AppStrings.startNow),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
+}
+
+/// Original line-art: a glowing halo, a dome-and-arch sanctuary and a cross.
+class _SanctuaryPainter extends CustomPainter {
+  const _SanctuaryPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final glow = Paint()
+      ..shader = const RadialGradient(
+        colors: [Color(0x66E2B965), Color(0x00E2B965)],
+      ).createShader(
+          Rect.fromCircle(center: Offset(cx, 80), radius: size.width * 0.55));
+    canvas.drawCircle(Offset(cx, 80), size.width * 0.55, glow);
+
+    final line = Paint()
+      ..color = const Color(0xCCE2B965)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2
+      ..strokeCap = StrokeCap.round;
+    // cross
+    canvas.drawLine(Offset(cx, 14), Offset(cx, 56), line);
+    canvas.drawLine(Offset(cx - 14, 30), Offset(cx + 14, 30), line);
+    // dome
+    final dome = Rect.fromCenter(center: Offset(cx, 98), width: 84, height: 84);
+    canvas.drawArc(dome, 3.14159, 3.14159, false, line);
+    // base + arch door
+    canvas.drawLine(Offset(cx - 60, 140), Offset(cx + 60, 140), line);
+    canvas.drawLine(Offset(cx - 42, 98), Offset(cx - 42, 140), line);
+    canvas.drawLine(Offset(cx + 42, 98), Offset(cx + 42, 140), line);
+    final door = Rect.fromCenter(center: Offset(cx, 124), width: 26, height: 32);
+    canvas.drawArc(door, 3.14159, 3.14159, false, line);
+    canvas.drawLine(Offset(cx - 13, 124), Offset(cx - 13, 140), line);
+    canvas.drawLine(Offset(cx + 13, 124), Offset(cx + 13, 140), line);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _FeatureTile extends StatelessWidget {
@@ -174,11 +244,11 @@ class _FeatureTile extends StatelessWidget {
     return Material(
       color: colors.card,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(26),
         side: BorderSide(color: colors.border),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(26),
         onTap: onTap,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -188,6 +258,7 @@ class _FeatureTile extends StatelessWidget {
               decoration: BoxDecoration(
                 color: colors.quoteSurface,
                 shape: BoxShape.circle,
+                border: Border.all(color: colors.border, width: 1.4),
               ),
               child: Icon(icon, color: colors.accent, size: 28),
             ),
